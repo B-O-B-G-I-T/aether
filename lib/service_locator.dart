@@ -8,6 +8,12 @@ import 'features/chat/data/datasources/chat_remote_data_source.dart';
 import 'features/chat/data/repositories/chat_repository_impl.dart';
 import 'features/chat/domain/repositories/chat_repository.dart';
 import 'features/chat/presentation/bloc/chat_bloc.dart';
+import 'features/peer/data/datasources/peer_local_data_source.dart';
+import 'features/peer/data/datasources/peer_remote_data_source.dart';
+import 'features/peer/data/repositories/peer_repository_impl.dart';
+import 'features/peer/domain/repositories/peer_repository.dart';
+import 'features/peer/domain/usecases/get_check_around.dart';
+import 'features/peer/presentation/bloc/peer_bloc.dart';
 import 'features/template/data/datasources/template_local_data_source.dart';
 import 'features/template/data/datasources/template_remote_data_source.dart';
 import 'features/template/data/repositories/template_repository_impl.dart';
@@ -55,3 +61,19 @@ void setUpChatServiceLocator() {
   // Bloc
   sl.registerSingleton<ChatBloc>(ChatBloc());
 }
+
+  void setUpPeerServiceLocator() {
+  // datasource
+  sl.registerSingleton<PeerRemoteDataSource>(PeerRemoteDataSourceImpl());
+  sl.registerSingleton<PeerLocalDataSource>(PeerLocalDataSourceImpl());
+
+  // repository
+  sl.registerSingleton<PeerRepository>(PeerRepositoryImpl());
+
+  // Usecase
+  sl.registerSingleton<GetPeer>(GetPeer());
+
+  // Bloc
+  sl.registerSingleton<PeerBloc>(PeerBloc());
+}
+

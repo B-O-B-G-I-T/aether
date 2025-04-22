@@ -1,10 +1,12 @@
 part of 'chat_bloc.dart';
 
 @immutable
-sealed class ChatState {
-  
-}
+sealed class ChatState extends Equatable {
+  const ChatState();
 
+  @override
+  List<Object?> get props => [];
+}
 
 class ChatInitial extends ChatState {}
 
@@ -14,10 +16,10 @@ class ChatConnected extends ChatState {
   final NearbyService nearbyService;
   final List<MessageEntity> messages;
 
-  ChatConnected(this.nearbyService, this.messages);
+  const ChatConnected(this.nearbyService, this.messages);
 
   @override
-  List<Object?> get props => [messages];
+    List<Object?> get props => [messages];
 
 
   ChatConnected copyWith({List<MessageEntity>? messages}) {
@@ -28,7 +30,7 @@ class ChatConnected extends ChatState {
 class ChatError extends ChatState {
   final String message;
 
-  ChatError(this.message);
+  const ChatError(this.message);
 
   @override
   List<Object?> get props => [message];

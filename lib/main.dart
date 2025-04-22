@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/route/go_router_provider.dart';
+import 'features/peer/presentation/bloc/peer_bloc.dart';
 
 void main() {
   setUpChatServiceLocator();
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (context) => ChatBloc())],
+      providers: [BlocProvider(create: (context) => sl<ChatBloc>()), BlocProvider(create: (context) => sl<PeerBloc>())],
       child: MaterialApp.router(debugShowCheckedModeBanner: false, routerConfig: router),
     );
   }

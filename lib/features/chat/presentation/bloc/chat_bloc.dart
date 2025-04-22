@@ -1,6 +1,7 @@
 import 'package:aether/core/params/user_params.dart';
 import 'package:aether/service_locator.dart';
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:meta/meta.dart';
 import '../../domain/entities/message_entity.dart';
