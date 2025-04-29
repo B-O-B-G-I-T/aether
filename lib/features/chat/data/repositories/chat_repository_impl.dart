@@ -1,9 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import '../../../../../core/errors/exceptions.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../core/params/chat_params.dart';
-import '../../../../core/params/user_params.dart';
 import '../../../../service_locator.dart';
 import '../../domain/repositories/chat_repository.dart';
 import '../datasources/chat_local_data_source.dart';
@@ -30,17 +28,6 @@ class ChatRepositoryImpl implements ChatRepository {
     }
   }
 
-  @override
-  Future<Either<Failure, NearbyService>> initializeP2PConnection ({required UserParams userParams}) async {
-    try {
-      
-      NearbyService nearbyService = await sl<ChatRemoteDataSource>().init(userParams: userParams);
-
-      return Right(nearbyService);
-    } catch (e) {
-      return Left(ServerFailure(errorMessage: e.toString()));
-    }
-  }
 
   @override
   Future<Either<Failure, Stream<MessageEntity>>> receiveMessages() async {

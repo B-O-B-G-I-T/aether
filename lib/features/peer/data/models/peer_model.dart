@@ -1,20 +1,30 @@
 import '../../../../core/constants/peer_constant.dart';
+import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import '../../domain/entities/peer_entity.dart';
 
 class PeerModel extends PeerEntity {
-  const PeerModel({
-    required super.peer,
+  PeerModel({
+    required super.device,
+    super.description,
+    super.pathImageProfile,
+    super.myLastStartEncodeImage,
   });
 
   factory PeerModel.fromJson({required Map<String, dynamic> json}) {
     return PeerModel(
-      peer: json[kPeer],
+      device: Device(json[kPeerId], json[kPeerName], json[kState],),
+
+      description: json[kPeerDescription],
+      pathImageProfile: json[kPeerPathImageProfile] ?? '',
+      myLastStartEncodeImage: json[kPeerMyLastStartEncodeImage] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      kPeer: peer,
+      kPeerDescription: description,
+      kPeerPathImageProfile: pathImageProfile ?? '',
+      kPeerMyLastStartEncodeImage: myLastStartEncodeImage ?? '',
     };
   }
 }

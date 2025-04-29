@@ -6,13 +6,11 @@ import '../../../../service_locator.dart';
 import '../entities/peer_entity.dart';
 import '../repositories/peer_repository.dart';
 
-class GetCheckAround implements UseCase<Stream<List<PeerEntity>>, PeerParams> {
-  GetCheckAround();
+class DisconnectPeer implements UseCase<List<PeerEntity>, PeerParams> {
+  DisconnectPeer();
 
   @override
-  Future<Either<Failure, Stream<List<PeerEntity>>>> call({
-    required PeerParams param,
-  }) async {
-    return await sl<PeerRepository>().getCheckAround(peerParams: param);
+  Future<Either<Failure, List<PeerEntity>>> call({required PeerParams param}) async {
+    return await sl<PeerRepository>().disconnectPeer(peerParams: param);
   }
 }

@@ -38,6 +38,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   # pour la gestion des routes
   go_router: ^14.8.1
+  # pour la gestion des logs
+  logger: ^2.5.0
   # pour la gestion des états
   flutter_bloc: ^9.1.0
   # pour la gestion des préférences partagées

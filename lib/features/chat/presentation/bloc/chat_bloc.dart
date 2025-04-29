@@ -1,20 +1,19 @@
-import 'package:aether/core/params/user_params.dart';
 import 'package:aether/service_locator.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:meta/meta.dart';
+import '../../../../commun/config/peer_config/presentation/bloc/peer_config_bloc.dart';
 import '../../domain/entities/message_entity.dart';
 import '../../domain/repositories/chat_repository.dart';
-import '../../domain/usecases/get_initialisation.dart';
 part 'chat_event.dart';
 part 'chat_state.dart';
 
 // Bloc
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatBloc() : super(ChatInitial()) {
-    on<InitializeP2PEvent>(_onInitializeP2P);
     on<SendMessageEvent>(_onSendMessage);
+    on<InitializeP2PEvent>(_onInitializeP2P);
     on<MessageReceivedEvent>(_onMessageReceived);
   }
 
@@ -23,9 +22,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   Future<void> _onInitializeP2P(InitializeP2PEvent event, Emitter<ChatState> emit) async {
     try {
       emit(ChatLoading());
-      final result = await sl.get<GetInitialisation>().call(param: UserParams(displayName: 'displayName', description: 'description'));
-
-      result.fold((failure) => emit(ChatError(failure.toString())), (nearbyService) => emit(ChatConnected(nearbyService, _messages)));
+      final nearbyService = sl<PeerConfigBloc>().state;
+      if (nearbyService is PeerConfigInitialised) {
+        emit(ChatConnected(nearbyService: nearbyService.nearbyService, messages: []));
+      } else {
+        emit(ChatError('Failed to initialize P2P connection'));
+      }
     } catch (e) {
       emit(ChatError(e.toString()));
     }

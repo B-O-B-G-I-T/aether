@@ -6,13 +6,13 @@ import '../../../../service_locator.dart';
 import '../entities/peer_entity.dart';
 import '../repositories/peer_repository.dart';
 
-class GetCheckAround implements UseCase<Stream<List<PeerEntity>>, PeerParams> {
-  GetCheckAround();
+class InvitePeer implements UseCase<List<PeerEntity>, InvitePeerParams> {
+  InvitePeer();
 
   @override
-  Future<Either<Failure, Stream<List<PeerEntity>>>> call({
-    required PeerParams param,
+  Future<Either<Failure, List<PeerEntity> >> call({
+    required InvitePeerParams param,
   }) async {
-    return await sl<PeerRepository>().getCheckAround(peerParams: param);
+    return await sl<PeerRepository>().invitePeer(invitePeerParams: param);
   }
 }

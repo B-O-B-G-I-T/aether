@@ -2,12 +2,16 @@ import 'package:aether/features/chat/presentation/bloc/chat_bloc.dart';
 import 'package:aether/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'commun/config/peer_config/presentation/bloc/peer_config_bloc.dart';
 import 'core/route/go_router_provider.dart';
 import 'features/peer/presentation/bloc/peer_bloc.dart';
 
-void main() {
-  setUpChatServiceLocator();
+Future<void> main() async {
+  // pour la gestion des pages
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await setupServiceLocator();
+
   runApp(const MyApp());
 }
 
@@ -17,8 +21,23 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (context) => sl<ChatBloc>()), BlocProvider(create: (context) => sl<PeerBloc>())],
-      child: MaterialApp.router(debugShowCheckedModeBanner: false, routerConfig: router),
+      providers: [
+        BlocProvider(create: (context) => sl<PeerConfigBloc>()..add(GetInitPeerConfigEvent())),
+        BlocProvider(create: (context) => sl<ChatBloc>()),
+        BlocProvider(create: (context) => sl<PeerBloc>()..add(GetCheckAroundEvent())),
+      ],
+
+      child: BlocBuilder<PeerConfigBloc, PeerConfigState>(
+        builder: (context, state) {
+          if (state is PeerConfigInitialised) {
+            return MaterialApp.router(debugShowCheckedModeBanner: false, routerConfig: router);
+          } else if (state is PeerConfigLoading) {
+            return MaterialApp(debugShowCheckedModeBanner: false, home: const Scaffold(body: Center(child: CircularProgressIndicator())));
+          } else {
+            return MaterialApp(debugShowCheckedModeBanner: false, home: const Scaffold(body: Center(child: Text('Error'))));
+          }
+        },
+      ),
     );
   }
 }
