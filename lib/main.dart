@@ -1,4 +1,5 @@
-import 'package:aether/features/chat/presentation/bloc/chat_bloc.dart';
+import 'package:aether/features/chat/presentation/bloc/chat_bloc/chat_bloc.dart';
+import 'package:aether/features/chat/presentation/bloc/bloc/notification_chat_bloc.dart';
 import 'package:aether/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => sl<PeerConfigBloc>()..add(GetInitPeerConfigEvent())),
         BlocProvider(create: (context) => sl<ChatBloc>()),
         BlocProvider(create: (context) => sl<PeerBloc>()),
+        BlocProvider(create: (context) => sl<NotificationChatBloc>()),
       ],
 
       child: BlocBuilder<PeerConfigBloc, PeerConfigState>(

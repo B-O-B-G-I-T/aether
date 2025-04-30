@@ -61,6 +61,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
             messages.add(chatMessageModel);
 
+            
+
             controller.add(messages);
 
             // if (chatMessageModel.type == 'DELETE') {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../peer/domain/entities/peer_entity.dart';
 import '../../../peer/presentation/widgets/connection_state_button.dart';
-import '../bloc/chat_bloc.dart';
+import '../bloc/chat_bloc/chat_bloc.dart';
 import '../../domain/entities/message_entity.dart';
 
 class ChatPage extends StatefulWidget {

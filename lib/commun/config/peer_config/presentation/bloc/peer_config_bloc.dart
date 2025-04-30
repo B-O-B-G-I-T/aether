@@ -5,7 +5,7 @@ import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:meta/meta.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/user_params.dart';
-import '../../../../../features/chat/presentation/bloc/chat_bloc.dart';
+import '../../../../../features/chat/presentation/bloc/chat_bloc/chat_bloc.dart';
 import '../../domain/usecases/get_init_peer_config.dart';
 
 part 'peer_config_event.dart';

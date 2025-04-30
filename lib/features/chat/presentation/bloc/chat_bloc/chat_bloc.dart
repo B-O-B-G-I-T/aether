@@ -2,11 +2,12 @@ import 'package:aether/service_locator.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import '../../../../core/params/chat_params.dart';
-import '../../../../core/params/peer_params.dart';
-import '../../domain/entities/message_entity.dart';
-import '../../domain/repositories/chat_repository.dart';
-import '../../domain/usecases/init_chat.dart';
+import '../../../../../core/params/chat_params.dart';
+import '../../../../../core/params/peer_params.dart';
+import '../../../domain/entities/message_entity.dart';
+import '../../../domain/repositories/chat_repository.dart';
+import '../../../domain/usecases/init_chat.dart';
+import '../bloc/notification_chat_bloc.dart';
 part 'chat_event.dart';
 part 'chat_state.dart';
 
@@ -33,6 +34,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             if (!emit.isDone) {
               _messages.addAll(messages);
               emit(ChatLoaded(messages: List.from(_messages)));
+
+              // Notifier le bloc de notification pour chaque nouveau message
+              
+              for (final message in messages) {
+                sl<NotificationChatBloc>().add(NewMessageReceived(message));
+              }
             }
           }
         },

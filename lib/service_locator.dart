@@ -12,7 +12,8 @@ import 'features/chat/data/repositories/chat_repository_impl.dart';
 import 'features/chat/domain/repositories/chat_repository.dart';
 import 'features/chat/domain/usecases/init_chat.dart';
 import 'features/chat/domain/usecases/send_message.dart';
-import 'features/chat/presentation/bloc/chat_bloc.dart';
+import 'features/chat/presentation/bloc/bloc/notification_chat_bloc.dart';
+import 'features/chat/presentation/bloc/chat_bloc/chat_bloc.dart';
 import 'features/peer/data/datasources/peer_local_data_source.dart';
 import 'features/peer/data/datasources/peer_remote_data_source.dart';
 import 'features/peer/data/repositories/peer_repository_impl.dart';
@@ -41,6 +42,7 @@ Future<void> setupServiceLocator() async {
   setUpPeerConfigServiceLocator();
   setUpChatServiceLocator();
   setUpPeerServiceLocator();
+  setUpNotificationServiceLocator();
 }
 
 void setUpTemplateServiceLocator() {
@@ -102,4 +104,9 @@ void setUpPeerServiceLocator() {
   sl.registerSingleton<DisconnectPeer>(DisconnectPeer());
   // Bloc
   sl.registerSingleton<PeerBloc>(PeerBloc());
+}
+
+void setUpNotificationServiceLocator() {
+  // Bloc
+  sl.registerSingleton<NotificationChatBloc>(NotificationChatBloc());
 }
