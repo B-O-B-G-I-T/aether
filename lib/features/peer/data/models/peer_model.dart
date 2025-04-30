@@ -20,6 +20,7 @@ class PeerModel extends PeerEntity {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       kPeerDescription: description,

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import '../../../../commun/config/peer_config/presentation/bloc/peer_config_bloc.dart';
+import '../../../../core/errors/app_logger.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/params/chat_params.dart';
 import '../../../../core/params/peer_params.dart';
@@ -27,7 +28,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
         callback: (data) async {
           try {
             if (data['message'] == null) {
-              print('Erreur: message est null');
+              AppLogger.e('Erreur: message est null');
               return;
             }
             final List<MessageModel> messages = [];
