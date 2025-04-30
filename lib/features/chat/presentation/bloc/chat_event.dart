@@ -3,7 +3,11 @@ part of 'chat_bloc.dart';
 @immutable
 sealed class ChatEvent  {}
 
-class InitializeP2PEvent extends ChatEvent  {}
+class InitializeP2PEvent extends ChatEvent  {
+  final String receiverId;
+
+  InitializeP2PEvent({required this.receiverId});
+}
 
 class SendMessageEvent extends ChatEvent {
   final String content;
@@ -13,9 +17,3 @@ class SendMessageEvent extends ChatEvent {
 
 }
 
-class MessageReceivedEvent extends ChatEvent {
-  final MessageEntity message;
-
-  MessageReceivedEvent(this.message);
-
-}

@@ -1,33 +1,42 @@
 import 'package:aether/service_locator.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:meta/meta.dart';
-import '../../../../commun/config/peer_config/presentation/bloc/peer_config_bloc.dart';
+import '../../../../core/params/chat_params.dart';
+import '../../../../core/params/peer_params.dart';
 import '../../domain/entities/message_entity.dart';
 import '../../domain/repositories/chat_repository.dart';
+import '../../domain/usecases/init_chat.dart';
 part 'chat_event.dart';
 part 'chat_state.dart';
 
 // Bloc
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatBloc() : super(ChatInitial()) {
-    on<SendMessageEvent>(_onSendMessage);
     on<InitializeP2PEvent>(_onInitializeP2P);
-    on<MessageReceivedEvent>(_onMessageReceived);
+    on<SendMessageEvent>(_onSendMessage);
   }
 
   final List<MessageEntity> _messages = [];
 
   Future<void> _onInitializeP2P(InitializeP2PEvent event, Emitter<ChatState> emit) async {
     try {
-      emit(ChatLoading());
-      final nearbyService = sl<PeerConfigBloc>().state;
-      if (nearbyService is PeerConfigInitialised) {
-        emit(ChatConnected(nearbyService: nearbyService.nearbyService, messages: []));
-      } else {
-        emit(ChatError('Failed to initialize P2P connection'));
-      }
+      emit(ChatConnected(messages: []));
+      final result = await sl<InitChat>().call(param: PeerParams(peerId: event.receiverId));
+
+      await result.fold(
+        (failure) async {
+          emit(ChatError(failure.toString()));
+        },
+        (streamMessages) async {
+          await for (final messages in streamMessages) {
+            if (!emit.isDone) {
+              _messages.addAll(messages);
+              emit(ChatConnected(messages: List.from(_messages)));
+            }
+          }
+        },
+      );
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -41,9 +50,18 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         senderId: 'currentUserId', // À remplacer par l'ID réel de l'utilisateur
         receiverId: event.receiverId,
         timestamp: DateTime.now(),
+        type: 'text',
       );
 
-      await sl.get<ChatRepository>().sendMessage(message);
+      await sl.get<ChatRepository>().sendMessage(
+        params: SendMessageParams(
+          content: event.content,
+          receiverId: event.receiverId,
+          senderId: 'currentUserId',
+          type: 'text',
+          timestamp: DateTime.now().toIso8601String(),
+        ),
+      );
       _messages.add(message);
 
       switch (state) {
@@ -55,22 +73,5 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     } catch (e) {
       emit(ChatError(e.toString()));
     }
-  }
-
-  void _onMessageReceived(MessageReceivedEvent event, Emitter<ChatState> emit) {
-    _messages.add(event.message);
-
-    switch (state) {
-      case ChatConnected connected:
-        emit(connected.copyWith(messages: _messages));
-      case _:
-        break;
-    }
-  }
-
-  @override
-  Future<void> close() {
-    sl.get<ChatRepository>().closeConnection();
-    return super.close();
   }
 }

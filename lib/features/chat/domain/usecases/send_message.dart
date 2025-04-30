@@ -3,16 +3,14 @@ import '../../../../../core/errors/failure.dart';
 import '../../../../core/constants/usecase/usecase.dart';
 import '../../../../core/params/chat_params.dart';
 import '../../../../service_locator.dart';
-import '../entities/chat_entity.dart';
+import '../entities/message_entity.dart';
 import '../repositories/chat_repository.dart';
 
-class GetChat implements UseCase<ChatEntity, ChatParams> {
-  GetChat();
+class SendMessage implements UseCase<MessageEntity, SendMessageParams> {
+  SendMessage();
 
   @override
-  Future<Either<Failure, ChatEntity>> call({
-    required ChatParams param,
-  }) async {
-    return await sl<ChatRepository>().getChat(chatParams: param);
+  Future<Either<Failure, MessageEntity>> call({required SendMessageParams param}) async {
+    return await sl<ChatRepository>().sendMessage(params: param);
   }
 }

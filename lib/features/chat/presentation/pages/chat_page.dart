@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../peer/domain/entities/peer_entity.dart';
+import '../../../peer/presentation/widgets/connection_state_button.dart';
 import '../bloc/chat_bloc.dart';
 import '../../domain/entities/message_entity.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+  final PeerEntity peer;
+  const ChatPage({super.key, required this.peer});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -16,7 +19,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    context.read<ChatBloc>().add(InitializeP2PEvent());
+    context.read<ChatBloc>().add(InitializeP2PEvent(receiverId: widget.peer.device.deviceId));
   }
 
   @override
@@ -28,7 +31,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Chat P2P')),
+      appBar: AppBar(title: const Text('Chat P2P'), actions: [ConnectionStateButton(peer: widget.peer)]),
       body: BlocBuilder<ChatBloc, ChatState>(
         builder: (context, state) {
           if (state is ChatLoading) {
@@ -72,12 +75,7 @@ class _ChatPageState extends State<ChatPage> {
             icon: const Icon(Icons.send),
             onPressed: () {
               if (_messageController.text.isNotEmpty) {
-                context.read<ChatBloc>().add(
-                  SendMessageEvent(
-                    content: _messageController.text,
-                    receiverId: 'receiverId', // À remplacer par l'ID réel du destinataire
-                  ),
-                );
+                context.read<ChatBloc>().add(SendMessageEvent(content: _messageController.text, receiverId: widget.peer.device.deviceId));
                 _messageController.clear();
               }
             },

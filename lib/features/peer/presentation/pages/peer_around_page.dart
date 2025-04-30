@@ -1,9 +1,7 @@
 import 'package:aether/features/peer/presentation/bloc/peer_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../domain/entities/peer_entity.dart';
-import '../widgets/connection_state_button.dart';
+import '../widgets/device_list_item.dart';
 
 class PeerPage extends StatelessWidget {
   const PeerPage({super.key});
@@ -36,13 +34,4 @@ class PeerPage extends StatelessWidget {
   }
 }
 
-class DeviceListItem extends StatelessWidget {
-  final PeerEntity peer;
 
-  const DeviceListItem({super.key, required this.peer});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(title: Text(peer.device.deviceName), subtitle: Text(peer.description ?? ''), trailing: ConnectionStateButton(peer: peer));
-  }
-}

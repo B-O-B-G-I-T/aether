@@ -1,49 +1,36 @@
 import 'package:dartz/dartz.dart';
-import '../../../../../core/errors/exceptions.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../core/params/chat_params.dart';
+import '../../../../core/params/peer_params.dart';
 import '../../../../service_locator.dart';
 import '../../domain/repositories/chat_repository.dart';
-import '../datasources/chat_local_data_source.dart';
 import '../datasources/chat_remote_data_source.dart';
-import '../models/chat_model.dart';
 import 'dart:async';
 import '../../domain/entities/message_entity.dart';
+import '../models/message_model.dart';
 
 class ChatRepositoryImpl implements ChatRepository {
-  final _messageController = StreamController<MessageEntity>.broadcast();
-
   ChatRepositoryImpl();
 
   @override
-  Future<Either<Failure, ChatModel>> getChat({required ChatParams chatParams}) async {
+  Future<Either<Failure, Stream<List<MessageModel>>>> initChat({required PeerParams peerParams}) async {
     try {
-      ChatModel remoteChat = await sl<ChatRemoteDataSource>().getChat(chatParams: chatParams);
-
-      sl<ChatLocalDataSource>().cacheChat(); // chatToCache: remoteChat
+      Stream<List<MessageModel>> remoteChat = await sl<ChatRemoteDataSource>().initChat(peerParams: peerParams);
 
       return Right(remoteChat);
-    } on ServerException {
-      return Left(ServerFailure(errorMessage: 'This is a server exception'));
+    } catch (e) {
+      return Left(ServerFailure(errorMessage: e.toString()));
     }
   }
 
-
   @override
-  Future<Either<Failure, Stream<MessageEntity>>> receiveMessages() async {
-    return Right(_messageController.stream);
-  }
+  Future<Either<Failure, MessageEntity>> sendMessage({required SendMessageParams params}) async {
+    try {
+      final MessageEntity message = await sl<ChatRemoteDataSource>().sendMessage(params: params);
 
-  @override
-  Future<void> sendMessage(MessageEntity message) async {
-    // TODO: Implémenter l'envoi de message P2P
-    // Pour l'instant, on simule juste la réception locale
-    _messageController.add(message);
-  }
-
-  @override
-  Future<void> closeConnection() async {
-    await _messageController.close();
-    // TODO: Nettoyer les ressources P2P
+      return Right(message);
+    } catch (e) {
+      return Left(ServerFailure(errorMessage: e.toString()));
+    }
   }
 }

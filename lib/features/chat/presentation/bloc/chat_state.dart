@@ -13,17 +13,17 @@ class ChatInitial extends ChatState {}
 class ChatLoading extends ChatState {}
 
 class ChatConnected extends ChatState {
-  final NearbyService nearbyService;
+
   final List<MessageEntity> messages;
 
-  const ChatConnected({required this.nearbyService, required this.messages});
+  const ChatConnected({required this.messages});
 
   @override
     List<Object?> get props => [messages];
 
 
   ChatConnected copyWith({List<MessageEntity>? messages}) {
-    return ChatConnected(nearbyService: nearbyService, messages: messages ?? this.messages);
+    return ChatConnected( messages: messages ?? this.messages);
   }
 }
 
