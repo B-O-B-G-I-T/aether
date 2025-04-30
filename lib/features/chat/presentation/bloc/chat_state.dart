@@ -12,18 +12,18 @@ class ChatInitial extends ChatState {}
 
 class ChatLoading extends ChatState {}
 
-class ChatConnected extends ChatState {
+class ChatLoaded extends ChatState {
 
   final List<MessageEntity> messages;
 
-  const ChatConnected({required this.messages});
+  const ChatLoaded({required this.messages});
 
   @override
     List<Object?> get props => [messages];
 
 
-  ChatConnected copyWith({List<MessageEntity>? messages}) {
-    return ChatConnected( messages: messages ?? this.messages);
+  ChatLoaded copyWith({List<MessageEntity>? messages}) {
+    return ChatLoaded(messages: messages ?? this.messages);
   }
 }
 

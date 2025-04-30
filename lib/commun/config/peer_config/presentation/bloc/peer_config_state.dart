@@ -13,6 +13,6 @@ final class PeerConfigInitialised extends PeerConfigState {
 }
 
 final class PeerConfigError extends PeerConfigState {
-  final String message;
-  PeerConfigError(this.message);
+  final Failure failure;
+  PeerConfigError(this.failure);
 }

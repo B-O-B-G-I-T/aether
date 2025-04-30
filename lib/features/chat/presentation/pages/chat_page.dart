@@ -19,7 +19,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    context.read<ChatBloc>().add(InitializeP2PEvent(receiverId: widget.peer.device.deviceId));
+    // context.read<ChatBloc>().add(InitializeP2PEvent(receiverId: widget.peer.device.deviceId));
   }
 
   @override
@@ -38,7 +38,7 @@ class _ChatPageState extends State<ChatPage> {
             return const Center(child: CircularProgressIndicator());
           } else if (state is ChatError) {
             return Center(child: Text('Erreur: ${state.message}'));
-          } else if (state is ChatConnected) {
+          } else if (state is ChatLoaded) {
             return Column(
               children: [
                 Expanded(

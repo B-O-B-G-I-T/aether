@@ -21,7 +21,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   Future<void> _onInitializeP2P(InitializeP2PEvent event, Emitter<ChatState> emit) async {
     try {
-      emit(ChatConnected(messages: []));
+      emit(ChatLoaded(messages: []));
       final result = await sl<InitChat>().call(param: PeerParams(peerId: event.receiverId));
 
       await result.fold(
@@ -32,7 +32,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           await for (final messages in streamMessages) {
             if (!emit.isDone) {
               _messages.addAll(messages);
-              emit(ChatConnected(messages: List.from(_messages)));
+              emit(ChatLoaded(messages: List.from(_messages)));
             }
           }
         },
@@ -65,8 +65,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       _messages.add(message);
 
       switch (state) {
-        case ChatConnected connected:
-          emit(connected.copyWith(messages: _messages));
+        case ChatLoaded loaded:
+          emit(loaded.copyWith(messages: _messages));
         case _:
           break;
       }

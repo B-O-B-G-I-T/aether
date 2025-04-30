@@ -9,6 +9,8 @@ class InitializeP2PEvent extends ChatEvent  {
   InitializeP2PEvent({required this.receiverId});
 }
 
+
+
 class SendMessageEvent extends ChatEvent {
   final String content;
   final String receiverId;

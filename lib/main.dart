@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => sl<PeerConfigBloc>()..add(GetInitPeerConfigEvent())),
         BlocProvider(create: (context) => sl<ChatBloc>()),
-        BlocProvider(create: (context) => sl<PeerBloc>()..add(GetCheckAroundEvent())),
+        BlocProvider(create: (context) => sl<PeerBloc>()),
       ],
 
       child: BlocBuilder<PeerConfigBloc, PeerConfigState>(
