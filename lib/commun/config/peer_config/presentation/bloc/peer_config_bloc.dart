@@ -3,11 +3,14 @@ import 'package:aether/service_locator.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:meta/meta.dart';
+import '../../../../../core/errors/app_logger.dart';
 import '../../../../../core/errors/failure.dart';
+import '../../../../../core/params/peer_config_params.dart';
 import '../../../../../core/params/user_params.dart';
 import '../../../../../features/chat/presentation/bloc/chat_bloc/chat_bloc.dart';
+import '../../../../../features/user/presentation/bloc/user_bloc.dart';
+import '../../domain/usecases/disconnect_peer_config.dart';
 import '../../domain/usecases/get_init_peer_config.dart';
-
 part 'peer_config_event.dart';
 part 'peer_config_state.dart';
 
@@ -17,36 +20,79 @@ class PeerConfigBloc extends Bloc<PeerConfigEvent, PeerConfigState> {
       // implement event handler
     });
     on<GetInitPeerConfigEvent>(_onGetInitPeerConfig);
+    on<DisconnectPeerConfigEvent>(_onDisconnect);
   }
 
   Future<void> _onGetInitPeerConfig(GetInitPeerConfigEvent event, Emitter<PeerConfigState> emit) async {
     try {
+      AppLogger.i('PeerConfigBloc: État initial - Chargement en cours');
       emit(PeerConfigLoading());
-      final result = await sl.get<GetInitPeerConfig>().call(param: UserParams(displayName: 'displayName', description: 'description'));
 
-      result.fold(
-        (failure) {
-          emit(PeerConfigError(failure));
-        },
-        (nearbyService) {
-          emit(PeerConfigInitialised(nearbyService));
-        },
-      );
+      final userBloc = sl.get<UserBloc>();
+      userBloc.add(GetUserEvent());
+      await _waitForUserLoaded(userBloc: userBloc);
 
-      // wait for peer loaded
-      final peerBloc = sl.get<PeerBloc>();
-      peerBloc.add(GetCheckAroundEvent());
-      await _waitForPeerAroundLoaded(peerBloc: peerBloc);
+      final user = userBloc.state;
 
-      // wait for chat loaded
-      final chatBloc = sl.get<ChatBloc>();
-      chatBloc.add(InitializeP2PEvent(receiverId: 'receiverId'));
-      await _waitForChatLoaded(chatBloc: chatBloc);
+      if (user is UserLoaded) {
+        AppLogger.i('PeerConfigBloc: Utilisateur chargé - Initialisation de la configuration');
+        final result = await sl.get<GetInitPeerConfig>().call(
+          param: UserParams(displayName: user.user.displayName, description: user.user.description),
+        );
+
+        result.fold(
+          (failure) {
+            AppLogger.e('PeerConfigBloc: Erreur lors de l\'initialisation - ${failure.errorMessage}');
+            emit(PeerConfigError(failure));
+          },
+          (nearbyService) {
+            AppLogger.i('PeerConfigBloc: Configuration initialisée avec succès');
+            emit(PeerConfigInitialised(nearbyService));
+          },
+        );
+
+        // wait for peer loaded
+        final peerBloc = sl.get<PeerBloc>();
+        peerBloc.add(GetCheckAroundEvent());
+        await _waitForPeerAroundLoaded(peerBloc: peerBloc);
+
+        // wait for chat loaded
+        final chatBloc = sl.get<ChatBloc>();
+        chatBloc.add(InitializeP2PEvent(receiverId: 'receiverId'));
+        await _waitForChatLoaded(chatBloc: chatBloc);
+      } else if (user is UserNotLoaded) {
+        AppLogger.i('PeerConfigBloc: Utilisateur non chargé - Redirection vers la page de création');
+        emit(PeerConfigUserNotLoaded());
+      } else {
+        AppLogger.e('PeerConfigBloc: État utilisateur inattendu - ${user.runtimeType}');
+        emit(PeerConfigError(ServerFailure(errorMessage: 'État utilisateur inattendu')));
+      }
     } catch (e) {
+      AppLogger.e('PeerConfigBloc: Erreur non gérée - ${e.toString()}');
       emit(PeerConfigError(ServerFailure(errorMessage: e.toString())));
     }
   }
 
+  Future<void> _onDisconnect(DisconnectPeerConfigEvent event, Emitter<PeerConfigState> emit) async {
+    final nearbyService = (state as PeerConfigInitialised).nearbyService;
+    emit(PeerConfigLoading());
+    final result = await sl.get<DisconnectPeerConfig>().call(param: DisconnectPeerConfigParams(nearbyService: nearbyService));
+    result.fold(
+      (failure) {
+        AppLogger.e('PeerConfigBloc: Erreur lors de la déconnexion - ${failure.errorMessage}');
+        emit(PeerConfigError(failure));
+      },
+      (nearbyService) {
+        emit(PeerConfigUserNotLoaded());
+      },
+    );
+  }
+
+  Future<void> _waitForUserLoaded({required UserBloc userBloc}) async {
+    await for (final state in userBloc.stream) {
+      if (state is UserLoaded || state is UserError || state is UserNotLoaded) break;
+    }
+  }
 
   Future<void> _waitForPeerAroundLoaded({required PeerBloc peerBloc}) async {
     await for (final state in peerBloc.stream) {

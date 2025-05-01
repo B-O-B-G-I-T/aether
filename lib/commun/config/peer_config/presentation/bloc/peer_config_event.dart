@@ -4,3 +4,5 @@ part of 'peer_config_bloc.dart';
 sealed class PeerConfigEvent {}
 
 class GetInitPeerConfigEvent extends PeerConfigEvent {}
+
+class DisconnectPeerConfigEvent extends PeerConfigEvent {}

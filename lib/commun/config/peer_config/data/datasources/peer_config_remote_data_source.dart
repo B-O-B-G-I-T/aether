@@ -1,11 +1,10 @@
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import '../../../../../core/params/peer_config_params.dart';
 import '../../../../../core/params/user_params.dart';
-import '../models/peer_config_model.dart';
 
 abstract class PeerConfigRemoteDataSource {
-  Future<PeerConfigModel> getPeerConfig({required PeerConfigParams peerConfigParams});
   Future<NearbyService> init({required UserParams userParams});
+  Future<void> disconnect({required DisconnectPeerConfigParams params});
 }
 
 class PeerConfigRemoteDataSourceImpl implements PeerConfigRemoteDataSource {
@@ -24,7 +23,7 @@ class PeerConfigRemoteDataSourceImpl implements PeerConfigRemoteDataSource {
     await nearbyService.init(
       serviceType: 'mp-connection',
 
-      deviceName: "mp-connection-${userParams.displayName}",
+      deviceName: userParams.displayName,
       description: userParams.description,
       strategy: Strategy.P2P_CLUSTER,
       callback: (isRunning) async {
@@ -52,7 +51,9 @@ class PeerConfigRemoteDataSourceImpl implements PeerConfigRemoteDataSource {
   }
 
   @override
-  Future<PeerConfigModel> getPeerConfig({required PeerConfigParams peerConfigParams}) async {
-    return PeerConfigModel(peerConfig: 'PeerConfig 1');
+  Future<void> disconnect({required DisconnectPeerConfigParams params}) async {
+    final NearbyService nearbyService = params.nearbyService;
+    await nearbyService.stopAdvertisingPeer();
+    await nearbyService.stopBrowsingForPeers();
   }
 }

@@ -4,6 +4,7 @@ import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../features/peer/domain/entities/peer_entity.dart';
 import '../../features/peer/presentation/pages/peer_around_page.dart';
 import '../../features/template/presentation/pages/template_page.dart';
+import '../../features/user/presentation/pages/user_page.dart';
 import '../../layout_scaffold.dart';
 import 'route_name.dart';
 
@@ -36,7 +37,7 @@ final router = GoRouter(
         StatefulShellBranch(routes: [GoRoute(path: contactRoute, builder: (context, state) => const TemplatePage())]),
 
         // route pour la page de compte
-        StatefulShellBranch(routes: [GoRoute(path: demandeRoute, builder: (context, state) => const TemplatePage())]),
+        StatefulShellBranch(routes: [GoRoute(path: userRoute, builder: (context, state) => const UserPage())]),
       ],
     ),
 

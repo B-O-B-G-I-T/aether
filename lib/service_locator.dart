@@ -4,6 +4,7 @@ import 'commun/config/peer_config/data/datasources/peer_config_local_data_source
 import 'commun/config/peer_config/data/datasources/peer_config_remote_data_source.dart';
 import 'commun/config/peer_config/data/repositories/peer_config_repository_impl.dart';
 import 'commun/config/peer_config/domain/repositories/peer_config_repository.dart';
+import 'commun/config/peer_config/domain/usecases/disconnect_peer_config.dart';
 import 'commun/config/peer_config/domain/usecases/get_init_peer_config.dart';
 import 'commun/config/peer_config/presentation/bloc/peer_config_bloc.dart';
 import 'features/chat/data/datasources/chat_local_data_source.dart';
@@ -28,6 +29,14 @@ import 'features/template/data/datasources/template_remote_data_source.dart';
 import 'features/template/data/repositories/template_repository_impl.dart';
 import 'features/template/domain/repositories/template_repository.dart';
 import 'features/template/domain/usecases/get_template.dart';
+import 'features/user/data/datasources/user_local_data_source.dart';
+import 'features/user/data/datasources/user_remote_data_source.dart';
+import 'features/user/data/repositories/user_repository_impl.dart';
+import 'features/user/domain/repositories/user_repository.dart';
+import 'features/user/domain/usecases/disconnect.dart';
+import 'features/user/domain/usecases/get_user.dart';
+import 'features/user/domain/usecases/set_user.dart';
+import 'features/user/presentation/bloc/user_bloc.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -44,6 +53,7 @@ Future<void> setupServiceLocator() async {
   setUpChatServiceLocator();
   setUpPeerServiceLocator();
   setUpNotificationServiceLocator();
+  setUpUserServiceLocator();
 }
 
 void setUpTemplateServiceLocator() {
@@ -61,6 +71,22 @@ void setUpTemplateServiceLocator() {
   // sl.registerSingleton<TarifBloc>(TarifBloc());
 }
 
+void setUpUserServiceLocator() {
+  // datasource
+  sl.registerSingleton<UserRemoteDataSource>(UserRemoteDataSourceImpl());
+  sl.registerSingleton<UserLocalDataSource>(UserLocalDataSourceImpl());
+
+  // repository
+  sl.registerSingleton<UserRepository>(UserRepositoryImpl());
+
+  // Usecase
+  sl.registerSingleton<GetUser>(GetUser());
+  sl.registerSingleton<SetUser>(SetUser());
+  sl.registerSingleton<Disconnect>(Disconnect());
+  // Bloc
+  sl.registerSingleton<UserBloc>(UserBloc());
+}
+
 void setUpPeerConfigServiceLocator() {
   // datasource
   sl.registerSingleton<PeerConfigRemoteDataSource>(PeerConfigRemoteDataSourceImpl());
@@ -71,6 +97,7 @@ void setUpPeerConfigServiceLocator() {
 
   // Usecase
   sl.registerSingleton<GetInitPeerConfig>(GetInitPeerConfig());
+  sl.registerSingleton<DisconnectPeerConfig>(DisconnectPeerConfig());
 
   // Bloc
   sl.registerSingleton<PeerConfigBloc>(PeerConfigBloc());

@@ -1,3 +1,5 @@
+import 'package:flutter_nearby_connections/flutter_nearby_connections.dart' show NearbyService;
+
 class PeerConfigParams {
   final String template;
   final String name;
@@ -12,4 +14,12 @@ class PeerConfigParams {
     required this.image,
     required this.url,
   }); 
+}
+
+class DisconnectPeerConfigParams {
+  final NearbyService nearbyService;
+
+  const DisconnectPeerConfigParams({
+    required this.nearbyService,
+  });
 }

@@ -1,6 +1,5 @@
 // ignore_for_file: constant_identifier_names
 
-String kUser = 'User';
 String kArticle = 'article';
 
 String kTemplate = 'template';

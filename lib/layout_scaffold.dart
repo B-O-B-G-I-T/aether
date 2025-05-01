@@ -61,7 +61,7 @@ class LayoutScaffold extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(isSelected ? Icons.home : Icons.home_outlined, color: isSelected ? selectedColor : unselectedColor),
+              Icon(isSelected ? icon : icon, color: isSelected ? selectedColor : unselectedColor),
               const SizedBox(height: 4),
               Text(
                 label,

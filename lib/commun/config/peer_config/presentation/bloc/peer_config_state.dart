@@ -12,6 +12,8 @@ final class PeerConfigInitialised extends PeerConfigState {
   PeerConfigInitialised(this.nearbyService);
 }
 
+final class PeerConfigUserNotLoaded extends PeerConfigState {}
+
 final class PeerConfigError extends PeerConfigState {
   final Failure failure;
   PeerConfigError(this.failure);
