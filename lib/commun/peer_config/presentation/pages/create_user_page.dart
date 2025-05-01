@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/errors/app_logger.dart';
-import '../../../../../core/params/user_params.dart';
-import '../../../../../features/user/domain/usecases/set_user.dart';
-import '../../../../../service_locator.dart';
+import '../../../../core/errors/app_logger.dart';
+import '../../../../core/params/user_params.dart';
+import '../../../../features/user/domain/usecases/set_user.dart';
+import '../../../../service_locator.dart';
 import '../bloc/peer_config_bloc.dart';
 
 class CreateUserPage extends StatelessWidget {

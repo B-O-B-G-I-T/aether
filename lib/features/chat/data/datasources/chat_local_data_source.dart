@@ -1,9 +1,8 @@
-import 'dart:convert';
-import 'package:aether/service_locator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../core/constants/chat_constants.dart';
+import 'package:sqflite/sqflite.dart';
+import '../../../../service_locator.dart';
 import '../../../peer/domain/entities/peer_entity.dart';
 import '../models/message_model.dart';
+import '../../../../commun/peer_config/data/datasources/database_config.dart';
 
 abstract class ChatLocalDataSource {
   Future<void> saveMessage({required MessageModel message});
@@ -12,36 +11,38 @@ abstract class ChatLocalDataSource {
   Future<void> clearMessages();
 }
 
-
 class ChatLocalDataSourceImpl implements ChatLocalDataSource {
+  final DatabaseConfig _database;
 
-  ChatLocalDataSourceImpl();
+  ChatLocalDataSourceImpl() : _database = sl<DatabaseConfig>();
 
   @override
   Future<void> saveMessage({required MessageModel message}) async {
-    final List<MessageModel> messages = await getMessages();
-    messages.add(message);
-    await sl<SharedPreferences>().setString(cachedMessages, json.encode(messages.map((m) => m.toJson()).toList()));
+    final db = await _database.database;
+    await db.insert('messages', message.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   @override
   Future<List<MessageModel>> getMessages() async {
-    final jsonString = sl<SharedPreferences>().getString(cachedMessages);
-    if (jsonString != null) {
-      final List<dynamic> jsonList = json.decode(jsonString);
-      return jsonList.map((json) => MessageModel.fromJson(json: json)).toList();
-    }
-    return [];
+    final db = await _database.database;
+    final List<Map<String, dynamic>> maps = await db.query('messages');
+    return List.generate(maps.length, (i) => MessageModel.fromJson(json: maps[i]));
   }
 
   @override
   Future<List<MessageModel>> getMessagesByPeer({required PeerEntity peer}) async {
-    final List<MessageModel> messages = await getMessages();
-    return messages.where((message) => message.senderId == peer.device.deviceId || message.receiverId == peer.device.deviceId).toList();
+    final db = await _database.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'messages',
+      where: 'sender_id = ? OR receiver_id = ?',
+      whereArgs: [peer.device.deviceId, peer.device.deviceId],
+    );
+    return List.generate(maps.length, (i) => MessageModel.fromJson(json: maps[i]));
   }
 
   @override
   Future<void> clearMessages() async {
-    await sl<SharedPreferences>().remove(cachedMessages);
+    final db = await _database.database;
+    await db.delete('messages');
   }
 }

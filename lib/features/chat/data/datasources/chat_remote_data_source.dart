@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
-import '../../../../commun/config/peer_config/presentation/bloc/peer_config_bloc.dart';
+import '../../../../commun/peer_config/presentation/bloc/peer_config_bloc.dart';
 import '../../../../core/errors/app_logger.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/params/chat_params.dart';
@@ -22,7 +22,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     try {
       final NearbyService nearbyService = (sl<PeerConfigBloc>().state as PeerConfigInitialised).nearbyService;
 
-      final StreamController<List<MessageModel>> controller = StreamController();
+      final StreamController<List<MessageModel>> controller = StreamController<List<MessageModel>>.broadcast();
 
       nearbyService.dataReceivedSubscription(
         callback: (data) async {
@@ -31,54 +31,20 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
               AppLogger.e('Erreur: message est null');
               return;
             }
-            final List<MessageModel> messages = [];
-            // Vérifiez si data est une chaîne JSON valide
 
-            // if (data['message'].startsWith("ACK ")) {
-            //   // Enregistre le message dans la base de données
-            //   final String messageId = data['message'].substring(4);
-            //   final ChatMessageEntity messageACK = chat.firstWhere((element) => element.id == messageId);
-            //   messageACK.ack = 1;
-
-            //   await eitherFailureOrEnregistreMessage(chatMessageParams: messageACK.toParamsAKC());
-            //   return;
-            // }
-
-            // if (data['message'].startsWith("PROFILE IMAGE ")) {
-            //   if (data['message'].substring(14).isNotEmpty) {
-            //     final dataMessage = data['message'].substring(14);
-
-            //     final UserParams userParams = UserParams(id: data["senderDeviceId"], name: data["senderDeviceId"], pathImageProfile: dataMessage);
-            //     //debugPrint("statement $userParams");
-
-            //     await eitherFailureOrSaveSendedImageProfile(userParams: userParams);
-            //   }
-            //   notifyListeners();
-            //   return;
-            // }
-            // passse les data en JSON
             MessageModel chatMessageModel = await manageDataReceivedToJson(data);
-
-            messages.add(chatMessageModel);
-
-            
-
-            controller.add(messages);
-
-            // if (chatMessageModel.type == 'DELETE') {
-            //   // Enregistre le message supprimé dans la base de données
-            //   await eitherFailureOrDeleteMessage(chatMessageEntity: chatMessageModel);
-
-            //   await eitherFailureOrEnregistreMessage(chatMessageParams: chatMessageModel.toChatMessageParams());
-            // } else {
-            //   // enregistre le message dans la base de données et envoie ack
-            //   await receiveMessage(chatMessageModel: chatMessageModel, nearbyService: nearbyService);
-            // }
+            controller.add([chatMessageModel]);
           } catch (e) {
-            throw ServerException();
+            AppLogger.e('Erreur lors du traitement du message: $e');
+            controller.addError(e);
           }
         },
       );
+
+      // Gérer la fermeture du controller
+      controller.onCancel = () {
+        controller.close();
+      };
 
       return controller.stream;
     } catch (e) {

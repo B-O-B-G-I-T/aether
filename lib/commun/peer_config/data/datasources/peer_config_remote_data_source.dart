@@ -1,6 +1,6 @@
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
-import '../../../../../core/params/peer_config_params.dart';
-import '../../../../../core/params/user_params.dart';
+import '../../../../core/params/peer_config_params.dart';
+import '../../../../core/params/user_params.dart';
 
 abstract class PeerConfigRemoteDataSource {
   Future<NearbyService> init({required UserParams userParams});

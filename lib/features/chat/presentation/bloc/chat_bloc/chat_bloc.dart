@@ -26,7 +26,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   Future<void> _onInitializeP2P(InitializeP2PEvent event, Emitter<ChatState> emit) async {
     try {
-      emit(ChatLoaded(messages: []));
+      emit(ChatLoading());
       final result = await sl<InitChat>().call(param: PeerParams(peerId: event.receiverId));
 
       await result.fold(
@@ -54,32 +54,19 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   Future<void> _onSendMessage(SendMessageEvent event, Emitter<ChatState> emit) async {
     try {
-      final message = MessageEntity(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        content: event.content,
-        senderId: 'currentUserId', // À remplacer par l'ID réel de l'utilisateur
-        receiverId: event.receiverId,
-        timestamp: DateTime.now(),
-        type: 'text',
-      );
+      final result = await sl<SendMessage>().call(param: event.message);
 
-      await sl<SendMessage>().call(
-        param: SendMessageParams(
-          content: event.content,
-          receiverId: event.receiverId,
-          senderId: 'currentUserId',
-          type: 'text',
-          timestamp: DateTime.now().toIso8601String(),
-        ),
-      );
-      _messages.add(message);
+      result.fold(
+        (failure) {
+          emit(ChatError(failure));
+        },
+        (message) {
+          emit(ChatLoading());
 
-      switch (state) {
-        case ChatLoaded loaded:
-          emit(loaded.copyWith(messages: _messages));
-        case _:
-          break;
-      }
+          _messages.add(message);
+          emit(ChatLoaded(messages: List.from(_messages)));
+        },
+      );
     } catch (e) {
       emit(ChatError(ServerFailure(errorMessage: e.toString())));
     }
@@ -87,14 +74,20 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   Future<void> _onGetConversationMessages(GetConversationMessagesEvent event, Emitter<ChatState> emit) async {
     try {
+      _messages.clear();
       final messages = await sl<GetConversationMessages>().call(param: GetConversationMessagesParams(peer: event.peer));
 
-      messages.fold((failure) => emit(ChatError(failure)), (messages) => _messages.addAll(messages));
-
-      emit(ChatLoaded(messages: _messages));
+      messages.fold(
+        (failure) {
+          emit(ChatError(failure));
+        },
+        (messages) {
+          _messages.addAll(messages);
+          emit(ChatLoaded(messages: List.from(_messages)));
+        },
+      );
     } catch (e) {
       emit(ChatError(ServerFailure(errorMessage: e.toString())));
     }
   }
-
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/params/chat_params.dart';
 import '../../../peer/domain/entities/peer_entity.dart';
 import '../../../peer/presentation/widgets/connection_state_button.dart';
+import '../../../user/presentation/bloc/user_bloc.dart';
 import '../bloc/chat_bloc/chat_bloc.dart';
 import '../../domain/entities/message_entity.dart';
 
@@ -19,8 +21,6 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    
-    // context.read<ChatBloc>().add(InitializeP2PEvent(receiverId: widget.peer.device.deviceId));
   }
 
   @override
@@ -69,14 +69,24 @@ class _ChatPageState extends State<ChatPage> {
           Expanded(
             child: TextField(
               controller: _messageController,
-              decoration: const InputDecoration(hintText: 'Écrivez votre message...', border: OutlineInputBorder()),
+              decoration: InputDecoration(hintText: 'Écrivez votre message...', border: OutlineInputBorder()),
             ),
           ),
           IconButton(
             icon: const Icon(Icons.send),
             onPressed: () {
               if (_messageController.text.isNotEmpty) {
-                context.read<ChatBloc>().add(SendMessageEvent(content: _messageController.text, receiverId: widget.peer.device.deviceId));
+                if (context.read<UserBloc>().state is UserLoaded) {
+                  final currentUserId = (context.read<UserBloc>().state as UserLoaded).user.displayName;
+                  final params = SendMessageParams(
+                    content: _messageController.text,
+                    receiverId: widget.peer.device.deviceId,
+                    senderId: currentUserId,
+                    type: 'text',
+                    timestamp: DateTime.now().toIso8601String(),
+                  );
+                  context.read<ChatBloc>().add(SendMessageEvent(message: params));
+                }
                 _messageController.clear();
               }
             },
@@ -94,24 +104,27 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMe = message.senderId == 'currentUserId'; // À adapter selon votre logique d'identification
-
-    return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        decoration: BoxDecoration(color: isMe ? Colors.blue : Colors.grey[300], borderRadius: BorderRadius.circular(12)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(message.content, style: TextStyle(color: isMe ? Colors.white : Colors.black)),
-            Text(
-              '${message.timestamp.hour}:${message.timestamp.minute}',
-              style: TextStyle(fontSize: 12, color: isMe ? Colors.white70 : Colors.black54),
-            ),
-          ],
-        ),
+    bool isMe = false;
+    if (context.read<UserBloc>().state is UserLoaded) {
+      final currentUserId = (context.read<UserBloc>().state as UserLoaded).user.displayName;
+      isMe = message.senderId == currentUserId; // À adapter selon votre logique d'identification
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            isMe ? 'Moi' : message.senderId,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 12, fontWeight: FontWeight.bold, color: isMe ? Colors.red : Colors.grey),
+          ),
+          const SizedBox(height: 2),
+          Text(message.content, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 16, color: Colors.black)),
+          Text(
+            '${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10, color: Colors.grey),
+          ),
+        ],
       ),
     );
   }

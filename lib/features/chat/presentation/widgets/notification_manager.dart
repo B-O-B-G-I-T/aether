@@ -9,7 +9,6 @@ class NotificationManager extends StatelessWidget {
 
   const NotificationManager({super.key, required this.child});
 
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<NotificationChatBloc, NotificationChatState>(
@@ -30,9 +29,9 @@ class NotificationManager extends StatelessWidget {
                   ),
                   backgroundColor: Colors.transparent,
                   elevation: 0,
-                  duration: const Duration(seconds: 5),
+                  duration: const Duration(seconds: 2),
                   behavior: SnackBarBehavior.floating,
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 ),
               );
             }

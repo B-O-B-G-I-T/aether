@@ -44,6 +44,8 @@ dependencies:
   flutter_bloc: ^9.1.0
   # pour la gestion des préférences partagées
   shared_preferences: ^2.5.3
+  # pour la gestion des bases de données locale
+  sqflite: ^2.4.2
   # pour la gestion des égalités
   equatable: ^2.0.7
   # pour la gestion des services

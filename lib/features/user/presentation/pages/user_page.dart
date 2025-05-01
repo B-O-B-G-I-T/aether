@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../commun/config/peer_config/presentation/bloc/peer_config_bloc.dart';
+import '../../../../commun/peer_config/presentation/bloc/peer_config_bloc.dart';
 import '../../../../service_locator.dart';
 import '../bloc/user_bloc.dart';
 

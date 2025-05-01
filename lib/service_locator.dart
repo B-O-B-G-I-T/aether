@@ -1,12 +1,13 @@
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'commun/config/peer_config/data/datasources/peer_config_local_data_source.dart';
-import 'commun/config/peer_config/data/datasources/peer_config_remote_data_source.dart';
-import 'commun/config/peer_config/data/repositories/peer_config_repository_impl.dart';
-import 'commun/config/peer_config/domain/repositories/peer_config_repository.dart';
-import 'commun/config/peer_config/domain/usecases/disconnect_peer_config.dart';
-import 'commun/config/peer_config/domain/usecases/get_init_peer_config.dart';
-import 'commun/config/peer_config/presentation/bloc/peer_config_bloc.dart';
+import 'commun/peer_config/data/datasources/database_config.dart';
+import 'commun/peer_config/data/datasources/peer_config_local_data_source.dart';
+import 'commun/peer_config/data/datasources/peer_config_remote_data_source.dart';
+import 'commun/peer_config/data/repositories/peer_config_repository_impl.dart';
+import 'commun/peer_config/domain/repositories/peer_config_repository.dart';
+import 'commun/peer_config/domain/usecases/disconnect_peer_config.dart';
+import 'commun/peer_config/domain/usecases/get_init_peer_config.dart';
+import 'commun/peer_config/presentation/bloc/peer_config_bloc.dart';
 import 'features/chat/data/datasources/chat_local_data_source.dart';
 import 'features/chat/data/datasources/chat_remote_data_source.dart';
 import 'features/chat/data/repositories/chat_repository_impl.dart';
@@ -43,8 +44,9 @@ final GetIt sl = GetIt.instance;
 Future<void> initializeApp() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerSingleton<SharedPreferences>(sharedPreferences);
-}
+  sl.registerSingleton<DatabaseConfig>(DatabaseConfig.instance);
 
+}
 Future<void> setupServiceLocator() async {
   await initializeApp();
 

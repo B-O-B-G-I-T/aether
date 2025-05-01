@@ -51,6 +51,7 @@ class ChatRepositoryImpl implements ChatRepository {
   @override
   Future<Either<Failure, List<MessageEntity>>> getConversationMessages({required GetConversationMessagesParams params}) async {
     try {
+      
       final List<MessageModel> messages = await sl<ChatLocalDataSource>().getMessages();
       return Right(messages);
     } catch (e) {
