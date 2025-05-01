@@ -2,12 +2,15 @@ import 'package:aether/service_locator.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/chat_params.dart';
 import '../../../../../core/params/peer_params.dart';
+import '../../../../peer/domain/entities/peer_entity.dart';
 import '../../../domain/entities/message_entity.dart';
-import '../../../domain/repositories/chat_repository.dart';
+import '../../../domain/usecases/get_conversation_messages.dart';
 import '../../../domain/usecases/init_chat.dart';
-import '../bloc/notification_chat_bloc.dart';
+import '../../../domain/usecases/send_message.dart';
+import '../notication_in_screen_bloc/notification_chat_bloc.dart';
 part 'chat_event.dart';
 part 'chat_state.dart';
 
@@ -16,6 +19,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatBloc() : super(ChatInitial()) {
     on<InitializeP2PEvent>(_onInitializeP2P);
     on<SendMessageEvent>(_onSendMessage);
+    on<GetConversationMessagesEvent>(_onGetConversationMessages);
   }
 
   final List<MessageEntity> _messages = [];
@@ -27,7 +31,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
       await result.fold(
         (failure) async {
-          emit(ChatError(failure.toString()));
+          emit(ChatError(failure));
         },
         (streamMessages) async {
           await for (final messages in streamMessages) {
@@ -36,7 +40,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
               emit(ChatLoaded(messages: List.from(_messages)));
 
               // Notifier le bloc de notification pour chaque nouveau message
-              
               for (final message in messages) {
                 sl<NotificationChatBloc>().add(NewMessageReceived(message));
               }
@@ -45,7 +48,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         },
       );
     } catch (e) {
-      emit(ChatError(e.toString()));
+      emit(ChatError(ServerFailure(errorMessage: e.toString())));
     }
   }
 
@@ -60,8 +63,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         type: 'text',
       );
 
-      await sl.get<ChatRepository>().sendMessage(
-        params: SendMessageParams(
+      await sl<SendMessage>().call(
+        param: SendMessageParams(
           content: event.content,
           receiverId: event.receiverId,
           senderId: 'currentUserId',
@@ -78,7 +81,20 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           break;
       }
     } catch (e) {
-      emit(ChatError(e.toString()));
+      emit(ChatError(ServerFailure(errorMessage: e.toString())));
     }
   }
+
+  Future<void> _onGetConversationMessages(GetConversationMessagesEvent event, Emitter<ChatState> emit) async {
+    try {
+      final messages = await sl<GetConversationMessages>().call(param: GetConversationMessagesParams(peer: event.peer));
+
+      messages.fold((failure) => emit(ChatError(failure)), (messages) => _messages.addAll(messages));
+
+      emit(ChatLoaded(messages: _messages));
+    } catch (e) {
+      emit(ChatError(ServerFailure(errorMessage: e.toString())));
+    }
+  }
+
 }

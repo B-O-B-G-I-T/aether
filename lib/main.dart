@@ -1,5 +1,5 @@
 import 'package:aether/features/chat/presentation/bloc/chat_bloc/chat_bloc.dart';
-import 'package:aether/features/chat/presentation/bloc/bloc/notification_chat_bloc.dart';
+import 'package:aether/features/chat/presentation/bloc/notication_in_screen_bloc/notification_chat_bloc.dart';
 import 'package:aether/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/bloc/notification_chat_bloc.dart';
+import '../bloc/notication_in_screen_bloc/notification_chat_bloc.dart';
 
 class NotificationBadge extends StatelessWidget {
   const NotificationBadge({super.key});

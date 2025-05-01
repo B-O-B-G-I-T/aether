@@ -10,9 +10,10 @@ import 'features/chat/data/datasources/chat_local_data_source.dart';
 import 'features/chat/data/datasources/chat_remote_data_source.dart';
 import 'features/chat/data/repositories/chat_repository_impl.dart';
 import 'features/chat/domain/repositories/chat_repository.dart';
+import 'features/chat/domain/usecases/get_conversation_messages.dart';
 import 'features/chat/domain/usecases/init_chat.dart';
 import 'features/chat/domain/usecases/send_message.dart';
-import 'features/chat/presentation/bloc/bloc/notification_chat_bloc.dart';
+import 'features/chat/presentation/bloc/notication_in_screen_bloc/notification_chat_bloc.dart';
 import 'features/chat/presentation/bloc/chat_bloc/chat_bloc.dart';
 import 'features/peer/data/datasources/peer_local_data_source.dart';
 import 'features/peer/data/datasources/peer_remote_data_source.dart';
@@ -88,6 +89,7 @@ void setUpChatServiceLocator() {
 
   // Bloc
   sl.registerSingleton<ChatBloc>(ChatBloc());
+  sl.registerSingleton<GetConversationMessages>(GetConversationMessages());
 }
 
 void setUpPeerServiceLocator() {

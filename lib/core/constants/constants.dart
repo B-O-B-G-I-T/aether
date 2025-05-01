@@ -21,7 +21,7 @@ String kCart = 'cart';
 int maxPokemonId = 1008;
 
 // Shared preferences keys
-
+const cachedTemplate = 'CACHED_TEMPLATE';
 
 
 

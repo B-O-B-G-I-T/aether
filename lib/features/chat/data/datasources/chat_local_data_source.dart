@@ -1,43 +1,47 @@
-import '../models/chat_model.dart';
+import 'dart:convert';
+import 'package:aether/service_locator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../core/constants/chat_constants.dart';
+import '../../../peer/domain/entities/peer_entity.dart';
+import '../models/message_model.dart';
 
 abstract class ChatLocalDataSource {
-  Future<void> cacheChat();
-  // {required ChatModel? chatToCache}
-  Future<ChatModel> getLastChat();
+  Future<void> saveMessage({required MessageModel message});
+  Future<List<MessageModel>> getMessages();
+  Future<List<MessageModel>> getMessagesByPeer({required PeerEntity peer});
+  Future<void> clearMessages();
 }
 
-const cachedChat = 'CACHED_TEMPLATE';
 
 class ChatLocalDataSourceImpl implements ChatLocalDataSource {
-  //final SharedPreferencesWithCache   sharedPreferences;
 
   ChatLocalDataSourceImpl();
-  //{required this.sharedPreferences}
 
   @override
-  Future<ChatModel> getLastChat() {
-    //final jsonString = sharedPreferences.getString(cachedChat);
-
-    // if (jsonString != null) {
-    //   return Future.value(ChatModel.fromJson(json: json.decode(jsonString)));
-    // } else {
-    //   throw CacheException();
-    // }
-    return Future.value(ChatModel(chat: ""));
+  Future<void> saveMessage({required MessageModel message}) async {
+    final List<MessageModel> messages = await getMessages();
+    messages.add(message);
+    await sl<SharedPreferences>().setString(cachedMessages, json.encode(messages.map((m) => m.toJson()).toList()));
   }
 
   @override
-  Future<void> cacheChat() async { // {required ChatModel? chatToCache}
-    //   if (chatToCache != null) {
-    //     sharedPreferences.setString(
-    //       cachedChat,
-    //       json.encode(
-    //         chatToCache.toJson(),
-    //       ),
-    //     );
-    //   } else {
-    //     throw CacheException();
-    //   }
-    
+  Future<List<MessageModel>> getMessages() async {
+    final jsonString = sl<SharedPreferences>().getString(cachedMessages);
+    if (jsonString != null) {
+      final List<dynamic> jsonList = json.decode(jsonString);
+      return jsonList.map((json) => MessageModel.fromJson(json: json)).toList();
+    }
+    return [];
+  }
+
+  @override
+  Future<List<MessageModel>> getMessagesByPeer({required PeerEntity peer}) async {
+    final List<MessageModel> messages = await getMessages();
+    return messages.where((message) => message.senderId == peer.device.deviceId || message.receiverId == peer.device.deviceId).toList();
+  }
+
+  @override
+  Future<void> clearMessages() async {
+    await sl<SharedPreferences>().remove(cachedMessages);
   }
 }

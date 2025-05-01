@@ -1,6 +1,8 @@
 import 'package:aether/core/params/params.dart' show Params;
 import 'package:equatable/equatable.dart';
 
+import '../../features/peer/domain/entities/peer_entity.dart';
+
 
 class ChatParams extends Equatable implements Params {
   @override
@@ -17,3 +19,10 @@ class SendMessageParams extends ChatParams {
 
   SendMessageParams({required this.content, required this.receiverId, required this.senderId, required this.type, required this.timestamp});
 }
+
+class GetConversationMessagesParams extends ChatParams {
+  final PeerEntity peer;
+
+  GetConversationMessagesParams({required this.peer});
+}
+
