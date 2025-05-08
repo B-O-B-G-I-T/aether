@@ -1,6 +1,6 @@
 const homeRoute = '/peer';
 const chatRoute = '/peer/chat';
-const contactRoute = '/contact';
+const conversationsRoute = '/conversations';
 const userRoute = '/user';
 
 const peerRoute = '/peer';

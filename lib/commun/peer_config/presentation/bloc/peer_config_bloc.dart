@@ -8,6 +8,7 @@ import '../../../../core/errors/failure.dart';
 import '../../../../core/params/peer_config_params.dart';
 import '../../../../core/params/user_params.dart';
 import '../../../../features/chat/presentation/bloc/chat_bloc/chat_bloc.dart';
+import '../../../../features/chat/presentation/bloc/conversation_bloc/conversations_bloc.dart';
 import '../../../../features/user/presentation/bloc/user_bloc.dart';
 import '../../domain/usecases/disconnect_peer_config.dart';
 import '../../domain/usecases/get_init_peer_config.dart';
@@ -60,6 +61,13 @@ class PeerConfigBloc extends Bloc<PeerConfigEvent, PeerConfigState> {
         final chatBloc = sl.get<ChatBloc>();
         chatBloc.add(InitializeP2PEvent(receiverId: 'receiverId'));
         await _waitForChatLoaded(chatBloc: chatBloc);
+
+        // wait for conversation loaded
+        final conversationBloc = sl.get<ConversationsBloc>();
+        conversationBloc.add(LoadConversations());
+        await _waitForConversationLoaded(conversationBloc: conversationBloc);
+
+        // is not connected
       } else if (user is UserNotLoaded) {
         AppLogger.i('PeerConfigBloc: Utilisateur non chargé - Redirection vers la page de création');
         emit(PeerConfigUserNotLoaded());
@@ -103,6 +111,12 @@ class PeerConfigBloc extends Bloc<PeerConfigEvent, PeerConfigState> {
   Future<void> _waitForChatLoaded({required ChatBloc chatBloc}) async {
     await for (final state in chatBloc.stream) {
       if (state is ChatLoaded || state is ChatError) break;
+    }
+  }
+
+  Future<void> _waitForConversationLoaded({required ConversationsBloc conversationBloc}) async {
+    await for (final state in conversationBloc.stream) {
+      if (state is ConversationsLoaded || state is ConversationsError) break;
     }
   }
 }

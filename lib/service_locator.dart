@@ -11,10 +11,17 @@ import 'commun/peer_config/presentation/bloc/peer_config_bloc.dart';
 import 'features/chat/data/datasources/chat_local_data_source.dart';
 import 'features/chat/data/datasources/chat_remote_data_source.dart';
 import 'features/chat/data/repositories/chat_repository_impl.dart';
+import 'features/chat/data/repositories/conversations_repository_impl.dart';
 import 'features/chat/domain/repositories/chat_repository.dart';
+import 'features/chat/domain/repositories/conversations_repository.dart';
+import 'features/chat/domain/usecases/conversations/add_conversation.dart';
+import 'features/chat/domain/usecases/conversations/delete_conversation.dart';
+import 'features/chat/domain/usecases/conversations/update_conversation.dart';
 import 'features/chat/domain/usecases/get_conversation_messages.dart';
+import 'features/chat/domain/usecases/conversations/get_conversations.dart';
 import 'features/chat/domain/usecases/init_chat.dart';
 import 'features/chat/domain/usecases/send_message.dart';
+import 'features/chat/presentation/bloc/conversation_bloc/conversations_bloc.dart';
 import 'features/chat/presentation/bloc/notication_in_screen_bloc/notification_chat_bloc.dart';
 import 'features/chat/presentation/bloc/chat_bloc/chat_bloc.dart';
 import 'features/peer/data/datasources/peer_local_data_source.dart';
@@ -38,6 +45,7 @@ import 'features/user/domain/usecases/disconnect.dart';
 import 'features/user/domain/usecases/get_user.dart';
 import 'features/user/domain/usecases/set_user.dart';
 import 'features/user/presentation/bloc/user_bloc.dart';
+import 'features/chat/data/datasources/conversations_local_data_source.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -45,8 +53,8 @@ Future<void> initializeApp() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerSingleton<SharedPreferences>(sharedPreferences);
   sl.registerSingleton<DatabaseConfig>(DatabaseConfig.instance);
-
 }
+
 Future<void> setupServiceLocator() async {
   await initializeApp();
 
@@ -109,16 +117,24 @@ void setUpChatServiceLocator() {
   // datasource
   sl.registerSingleton<ChatRemoteDataSource>(ChatRemoteDataSourceImpl());
   sl.registerSingleton<ChatLocalDataSource>(ChatLocalDataSourceImpl());
+  sl.registerSingleton<ConversationsLocalDataSource>(ConversationsLocalDataSourceImpl());
+
   // repository
   sl.registerSingleton<ChatRepository>(ChatRepositoryImpl());
+  sl.registerSingleton<ConversationsRepository>(ConversationsRepositoryImpl());
 
   // Usecase
   sl.registerSingleton<InitChat>(InitChat());
   sl.registerSingleton<SendMessage>(SendMessage());
+  sl.registerSingleton<GetConversations>(GetConversations());
+  sl.registerSingleton<GetConversationMessages>(GetConversationMessages());
+  sl.registerSingleton<AddConversationUsecase>(AddConversationUsecase());
+  sl.registerSingleton<UpdateConversationUsecase>(UpdateConversationUsecase());
+  sl.registerSingleton<DeleteConversationUsecase>(DeleteConversationUsecase());
 
   // Bloc
   sl.registerSingleton<ChatBloc>(ChatBloc());
-  sl.registerSingleton<GetConversationMessages>(GetConversationMessages());
+  sl.registerSingleton<ConversationsBloc>(ConversationsBloc());
 }
 
 void setUpPeerServiceLocator() {

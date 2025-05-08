@@ -45,4 +45,5 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
     final db = await _database.database;
     await db.delete('messages');
   }
+
 }

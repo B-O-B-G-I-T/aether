@@ -6,10 +6,12 @@ import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/chat_params.dart';
 import '../../../../../core/params/peer_params.dart';
 import '../../../../peer/domain/entities/peer_entity.dart';
+import '../../../domain/entities/conversation_entity.dart';
 import '../../../domain/entities/message_entity.dart';
 import '../../../domain/usecases/get_conversation_messages.dart';
 import '../../../domain/usecases/init_chat.dart';
 import '../../../domain/usecases/send_message.dart';
+import '../conversation_bloc/conversations_bloc.dart';
 import '../notication_in_screen_bloc/notification_chat_bloc.dart';
 part 'chat_event.dart';
 part 'chat_state.dart';
@@ -34,15 +36,31 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           emit(ChatError(failure));
         },
         (streamMessages) async {
+          emit(ChatLoaded(messages: List.from(_messages)));
+
           await for (final messages in streamMessages) {
             if (!emit.isDone) {
               _messages.addAll(messages);
-              emit(ChatLoaded(messages: List.from(_messages)));
 
               // Notifier le bloc de notification pour chaque nouveau message
               for (final message in messages) {
                 sl<NotificationChatBloc>().add(NewMessageReceived(message));
+                // Ajouter la conversation à la liste des conversations
+                sl<ConversationsBloc>().add(
+                  AddConversation(
+                    conversation: ConversationEntity(
+                      id: event.receiverId,
+                      peerId: event.receiverId,
+                      peerName: message.senderId,
+                      description: message.content,
+                      lastMessage: message,
+                      lastActivity: DateTime.now(),
+                    ),
+                  ),
+                );
               }
+
+              emit(ChatLoaded(messages: List.from(_messages)));
             }
           }
         },
@@ -82,7 +100,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           emit(ChatError(failure));
         },
         (messages) {
-          _messages.addAll(messages);
+          if (messages.isNotEmpty) {
+            _messages.addAll(messages);
+          }
           emit(ChatLoaded(messages: List.from(_messages)));
         },
       );

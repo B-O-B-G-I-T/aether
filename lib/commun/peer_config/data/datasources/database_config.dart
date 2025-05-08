@@ -1,6 +1,8 @@
+import 'package:aether/core/constants/peer_constant.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../../../core/constants/chat_constants.dart';
+import '../../../../core/constants/conversation_constants.dart';
 
 class DatabaseConfig {
   static final DatabaseConfig instance = DatabaseConfig._init();
@@ -33,6 +35,18 @@ class DatabaseConfig {
         $kType TEXT NOT NULL
       )
     ''');
+
+    // Table des conversations
+    await db.execute('''
+      CREATE TABLE conversations(
+        $kId TEXT PRIMARY KEY,
+        $kSenderId TEXT NOT NULL,
+        $kPeerName TEXT NOT NULL,
+        $kPeerDescription TEXT,
+        $kLastMessage TEXT,
+        $kLastActivity DATETIME NOT NULL
+      )
+    ''');
   }
 
   Future<void> close() async {
@@ -43,6 +57,7 @@ class DatabaseConfig {
   Future<void> clearDatabase() async {
     final db = await instance.database;
     await db.execute('DROP TABLE IF EXISTS messages');
+    await db.execute('DROP TABLE IF EXISTS conversations');
     await _createDB(db, 1);
   }
 }

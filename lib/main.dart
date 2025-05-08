@@ -8,6 +8,7 @@ import 'commun/peer_config/presentation/bloc/peer_config_bloc.dart';
 import 'commun/peer_config/presentation/pages/create_user_page.dart';
 import 'core/errors/app_logger.dart';
 import 'core/route/go_router_provider.dart';
+import 'features/chat/presentation/bloc/conversation_bloc/conversations_bloc.dart';
 import 'features/peer/presentation/bloc/peer_bloc.dart';
 import 'features/user/presentation/bloc/user_bloc.dart';
 
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => sl<PeerConfigBloc>()..add(GetInitPeerConfigEvent())),
         BlocProvider(create: (context) => sl<ChatBloc>()),
+        BlocProvider(create: (context) => sl<ConversationsBloc>()),
         BlocProvider(create: (context) => sl<PeerBloc>()),
         BlocProvider(create: (context) => sl<NotificationChatBloc>()),
         BlocProvider(create: (context) => sl<UserBloc>()),
