@@ -17,6 +17,16 @@ final class DisconnectPeerEvent extends PeerEvent {
   DisconnectPeerEvent({required this.device});
 }
 
+
+final class GetKnownPeersEvent extends PeerEvent {
+
+}
+
+final class GetPeerEvent extends PeerEvent {
+  final String peerId;
+
+  GetPeerEvent({required this.peerId});
+}
 class StartDiscovery extends PeerEvent {}
 
 class StopDiscovery extends PeerEvent {}

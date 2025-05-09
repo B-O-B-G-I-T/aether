@@ -36,15 +36,15 @@ class DatabaseConfig {
       )
     ''');
 
-    // Table des conversations
+    // Table des peers
     await db.execute('''
-      CREATE TABLE conversations(
-        $kId TEXT PRIMARY KEY,
-        $kSenderId TEXT NOT NULL,
+      CREATE TABLE peers(
+        $kPeerId TEXT PRIMARY KEY,
         $kPeerName TEXT NOT NULL,
         $kPeerDescription TEXT,
-        $kLastMessage TEXT,
-        $kLastActivity DATETIME NOT NULL
+        $kPeerDeviceId TEXT NOT NULL,
+        $kPeerLastSeen DATETIME NOT NULL,
+        $kState TEXT NOT NULL
       )
     ''');
   }
@@ -57,7 +57,7 @@ class DatabaseConfig {
   Future<void> clearDatabase() async {
     final db = await instance.database;
     await db.execute('DROP TABLE IF EXISTS messages');
-    await db.execute('DROP TABLE IF EXISTS conversations');
+    await db.execute('DROP TABLE IF EXISTS peers');
     await _createDB(db, 1);
   }
 }

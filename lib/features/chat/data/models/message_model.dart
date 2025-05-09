@@ -22,6 +22,7 @@ class MessageModel extends MessageEntity {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {kId: id, kContent: content, kSenderId: senderId, kReceiverId: receiverId, kTimestamp: timestamp.toIso8601String(), kType: type};
   }

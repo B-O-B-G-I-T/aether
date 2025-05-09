@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import '../../../../core/params/chat_params.dart';
 import '../../../peer/domain/entities/peer_entity.dart';
+import '../../../peer/presentation/bloc/peer_bloc.dart';
 import '../../../peer/presentation/widgets/connection_state_button.dart';
 import '../../../user/presentation/bloc/user_bloc.dart';
-import '../../data/models/message_model.dart';
-import '../../domain/entities/conversation_entity.dart';
 import '../bloc/chat_bloc/chat_bloc.dart';
 import '../../domain/entities/message_entity.dart';
-import '../bloc/conversation_bloc/conversations_bloc.dart';
 
 class ChatPage extends StatefulWidget {
   final PeerEntity peer;
@@ -22,7 +21,7 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _showScrollButton = false;
-  
+
   @override
   void initState() {
     super.initState();
@@ -75,7 +74,6 @@ class _ChatPageState extends State<ChatPage> {
                     if (state is ChatError) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.failure.errorMessage)));
                     }
-
                   },
                   builder: (context, state) {
                     if (state is ChatLoading) {
@@ -87,26 +85,7 @@ class _ChatPageState extends State<ChatPage> {
                         return const Center(child: Text('Aucun message'));
                       }
 
-                      if (context.read<ConversationsBloc>().state is ConversationsLoaded) {
-                        final conversationsState = context.read<ConversationsBloc>().state as ConversationsLoaded;
-                        final existingConversation =
-                            conversationsState.conversations.where((conversation) => conversation.id == widget.peer.device.deviceId).firstOrNull;
-
-                        if (existingConversation == null) {
-                          context.read<ConversationsBloc>().add(
-                            AddConversation(
-                              conversation: ConversationEntity(
-                                id: widget.peer.device.deviceId,
-                                peerId: widget.peer.device.deviceId,
-                                peerName: widget.peer.device.deviceName,
-                                description: widget.peer.description,
-                                lastMessage: state.messages.last as MessageModel,
-                                lastActivity: DateTime.now(),
-                              ),
-                            ),
-                          );
-                        }
-                      }
+                      
                       final reverseList = state.messages.reversed.toList();
 
                       return ListView.builder(
@@ -140,37 +119,54 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Widget _buildMessageInput() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _messageController,
-              decoration: InputDecoration(hintText: 'Écrivez votre message...', border: OutlineInputBorder()),
-            ),
+    return BlocBuilder<PeerBloc, PeerState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _messageController,
+                  decoration: InputDecoration(hintText: 'Écrivez votre message...', border: OutlineInputBorder()),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.send),
+                onPressed: () {
+                  if (state is PeerLoaded) {
+                    if (state.connectedPeers != null) {
+                      final peer = state.connectedPeers!.where((peer) => peer.device.deviceId == widget.peer.device.deviceId).firstOrNull;
+                      if (_messageController.text.isNotEmpty && peer != null) {
+                        if (context.read<UserBloc>().state is UserLoaded && peer.device.state == SessionState.connected) {
+                          final currentUserId = (context.read<UserBloc>().state as UserLoaded).user.displayName;
+                          final params = SendMessageParams(
+                            content: _messageController.text,
+                            receiverId: widget.peer.device.deviceId,
+                            senderId: currentUserId,
+                            type: 'text',
+                            timestamp: DateTime.now().toIso8601String(),
+                          );
+                          context.read<ChatBloc>().add(SendMessageEvent(message: params));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Le peer n\'est pas connecté')));
+                        }
+                        _messageController.clear();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Le peer n\'est pas connecté')));
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Le peer n\'est pas connecté')));
+                    }
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Le peer n\'est pas connecté')));
+                  }
+                },
+              ),
+            ],
           ),
-          IconButton(
-            icon: const Icon(Icons.send),
-            onPressed: () {
-              if (_messageController.text.isNotEmpty) {
-                if (context.read<UserBloc>().state is UserLoaded) {
-                  final currentUserId = (context.read<UserBloc>().state as UserLoaded).user.displayName;
-                  final params = SendMessageParams(
-                    content: _messageController.text,
-                    receiverId: widget.peer.device.deviceId,
-                    senderId: currentUserId,
-                    type: 'text',
-                    timestamp: DateTime.now().toIso8601String(),
-                  );
-                  context.read<ChatBloc>().add(SendMessageEvent(message: params));
-                }
-                _messageController.clear();
-              }
-            },
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

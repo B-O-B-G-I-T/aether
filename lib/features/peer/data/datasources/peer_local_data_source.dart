@@ -1,12 +1,76 @@
+import 'package:sqflite/sqflite.dart';
+
+import '../../../../core/constants/peer_constant.dart';
+import '../../../../core/params/peer_params.dart';
+import '../../../../service_locator.dart';
+import '../../../../commun/peer_config/data/datasources/database_config.dart';
+import '../models/peer_model.dart';
 
 abstract class PeerLocalDataSource {
-
+  Future<void> savePeer(SavePeersParams savePeersParams);
+  Future<List<PeerModel>> getPeers();
+  Future<List<PeerModel>> getPeerByDeviceId(String deviceId);
+  Future<void> updatePeer(PeerModel peer);
+  Future<void> deletePeer(String peerId);
 }
 
-const cachedPeer = 'CACHED_TEMPLATE';
-
 class PeerLocalDataSourceImpl implements PeerLocalDataSource {
-  //final SharedPreferencesWithCache   sharedPreferences;
+  final DatabaseConfig _database;
 
+  PeerLocalDataSourceImpl() : _database = sl<DatabaseConfig>();
 
+  @override
+  Future<void> savePeer(SavePeersParams savePeersParams) async {
+    final db = await _database.database;
+    await db.insert('peers', {
+      kPeerId: savePeersParams.peer.device.deviceId,
+      kPeerName: savePeersParams.peer.device.deviceName,
+      kPeerDescription: savePeersParams.peer.device.deviceName,
+      kPeerDeviceId: savePeersParams.peer.device.deviceId,
+      kPeerLastSeen: DateTime.now().toIso8601String(),
+      kState: savePeersParams.peer.device.state.toString(),
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  @override
+  Future<List<PeerModel>> getPeers() async {
+    final db = await _database.database;
+    final List<Map<String, dynamic>> maps = await db.query('peers');
+    final peers = maps.map((e) => PeerModel.fromJson(json: e)).toList();
+    return peers;
+
+  }
+
+  @override
+  Future<List<PeerModel>> getPeerByDeviceId(String deviceId) async {
+    final db = await _database.database;
+
+    final List<Map<String, dynamic>> maps = await db.query('peers', where: '$kPeerDeviceId = ?', whereArgs: [deviceId]);
+    
+    if (maps.isEmpty) return [];
+
+    return maps.map((e) => PeerModel.fromJson(json: e)).toList();
+  }
+
+  @override
+  Future<void> updatePeer(PeerModel peer) async {
+    final db = await _database.database;
+    await db.update(
+      'peers',
+      {
+        kPeerName: peer.device.deviceName,
+        kPeerDescription: peer.device.deviceName,
+        kPeerLastSeen: DateTime.now().toIso8601String(),
+        kState: peer.device.state.toString(),
+      },
+      where: '$kPeerDeviceId = ?',
+      whereArgs: [peer.device.deviceId],
+    );
+  }
+
+  @override
+  Future<void> deletePeer(String peerId) async {
+    final db = await _database.database;
+    await db.delete('peers', where: '$kPeerDeviceId = ?', whereArgs: [peerId]);
+  }
 }
