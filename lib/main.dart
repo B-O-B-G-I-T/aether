@@ -3,7 +3,6 @@ import 'package:aether/features/chat/presentation/bloc/notication_in_screen_bloc
 import 'package:aether/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'commun/peer_config/data/datasources/database_config.dart';
 import 'commun/peer_config/presentation/bloc/peer_config_bloc.dart';
 import 'commun/peer_config/presentation/pages/create_user_page.dart';
 import 'core/errors/app_logger.dart';

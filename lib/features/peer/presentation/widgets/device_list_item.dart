@@ -16,7 +16,7 @@ class DeviceListItem extends StatelessWidget {
         context.push(chatRoute, extra: peer);
       },
       title: Text(peer.device.deviceName),
-      subtitle: Text(peer.description ?? ''),
+      subtitle: Text(peer.device.deviceDescription ?? ''),
       trailing: ConnectionStateButton(peer: peer),
     );
   }

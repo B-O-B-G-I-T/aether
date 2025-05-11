@@ -26,8 +26,8 @@ class PeerLocalDataSourceImpl implements PeerLocalDataSource {
       kPeerId: savePeersParams.peer.device.deviceId,
       kPeerName: savePeersParams.peer.device.deviceName,
       kPeerDescription: savePeersParams.peer.device.deviceName,
-      kPeerDeviceId: savePeersParams.peer.device.deviceId,
-      kPeerLastSeen: DateTime.now().toIso8601String(),
+      kPeerPathImageProfile: savePeersParams.peer.pathImageProfile,
+      kPeerMyLastStartEncodeImage: savePeersParams.peer.myLastStartEncodeImage,
       kState: savePeersParams.peer.device.state.toString(),
     }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
@@ -45,8 +45,8 @@ class PeerLocalDataSourceImpl implements PeerLocalDataSource {
   Future<List<PeerModel>> getPeerByDeviceId(String deviceId) async {
     final db = await _database.database;
 
-    final List<Map<String, dynamic>> maps = await db.query('peers', where: '$kPeerDeviceId = ?', whereArgs: [deviceId]);
-    
+    final List<Map<String, dynamic>> maps = await db.query('peers', where: '$kPeerId = ?', whereArgs: [deviceId]);
+
     if (maps.isEmpty) return [];
 
     return maps.map((e) => PeerModel.fromJson(json: e)).toList();
@@ -60,10 +60,11 @@ class PeerLocalDataSourceImpl implements PeerLocalDataSource {
       {
         kPeerName: peer.device.deviceName,
         kPeerDescription: peer.device.deviceName,
-        kPeerLastSeen: DateTime.now().toIso8601String(),
+        kPeerPathImageProfile: peer.pathImageProfile,
+        kPeerMyLastStartEncodeImage: peer.myLastStartEncodeImage,
         kState: peer.device.state.toString(),
       },
-      where: '$kPeerDeviceId = ?',
+      where: '$kPeerId = ?',
       whereArgs: [peer.device.deviceId],
     );
   }
@@ -71,6 +72,6 @@ class PeerLocalDataSourceImpl implements PeerLocalDataSource {
   @override
   Future<void> deletePeer(String peerId) async {
     final db = await _database.database;
-    await db.delete('peers', where: '$kPeerDeviceId = ?', whereArgs: [peerId]);
+    await db.delete('peers', where: '$kPeerId = ?', whereArgs: [peerId]);
   }
 }

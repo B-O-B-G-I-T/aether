@@ -44,9 +44,6 @@ class PeerRemoteDataSourceImpl implements PeerRemoteDataSource {
             peers.add(
               PeerModel(
                 device: element,
-                description: element.deviceDescription,
-                pathImageProfile: element.deviceDescription,
-                //myLastStartEncodeImage: element.state.index,
               ),
             );
           }

@@ -2,7 +2,7 @@ import 'package:aether/core/constants/peer_constant.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../../../core/constants/chat_constants.dart';
-import '../../../../core/constants/conversation_constants.dart';
+
 
 class DatabaseConfig {
   static final DatabaseConfig instance = DatabaseConfig._init();
@@ -41,10 +41,10 @@ class DatabaseConfig {
       CREATE TABLE peers(
         $kPeerId TEXT PRIMARY KEY,
         $kPeerName TEXT NOT NULL,
+        $kState TEXT NOT NULL,
         $kPeerDescription TEXT,
-        $kPeerDeviceId TEXT NOT NULL,
-        $kPeerLastSeen DATETIME NOT NULL,
-        $kState TEXT NOT NULL
+        $kPeerPathImageProfile TEXT,
+        $kPeerMyLastStartEncodeImage TEXT
       )
     ''');
   }

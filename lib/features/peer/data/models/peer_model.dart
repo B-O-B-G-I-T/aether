@@ -5,16 +5,13 @@ import '../../domain/entities/peer_entity.dart';
 class PeerModel extends PeerEntity {
   PeerModel({
     required super.device,
-    super.description,
     super.pathImageProfile,
     super.myLastStartEncodeImage,
   });
 
   factory PeerModel.fromJson({required Map<String, dynamic> json}) {
     return PeerModel(
-      device: Device(json[kPeerId], json[kPeerName], json[kState],),
-
-      description: json[kPeerDescription],
+      device: Device(json[kPeerId], json[kPeerName], json[kState], deviceDescription: json[kPeerDescription]),
       pathImageProfile: json[kPeerPathImageProfile] ?? '',
       myLastStartEncodeImage: json[kPeerMyLastStartEncodeImage] ?? '',
     );
@@ -23,7 +20,10 @@ class PeerModel extends PeerEntity {
   @override
   Map<String, dynamic> toJson() {
     return {
-      kPeerDescription: description,
+      kPeerId: device.deviceId,
+      kPeerName: device.deviceName,
+      kState: device.state,
+      kPeerDescription: device.deviceDescription,
       kPeerPathImageProfile: pathImageProfile ?? '',
       kPeerMyLastStartEncodeImage: myLastStartEncodeImage ?? '',
     };
