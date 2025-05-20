@@ -94,6 +94,10 @@ post_install do |installer|
 
         ## dart: PermissionGroup.assistant
         'PERMISSION_ASSISTANT=1',
+
+        ## dart: PermissionGroup.localNetwork
+        'PERMISSION_LOCAL_NETWORK=1',
+        
       ]
     end
   end

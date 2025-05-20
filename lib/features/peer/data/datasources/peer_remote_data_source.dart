@@ -41,11 +41,7 @@ class PeerRemoteDataSourceImpl implements PeerRemoteDataSource {
               // element.state = SessionState.connected;
             }
 
-            peers.add(
-              PeerModel(
-                device: element,
-              ),
-            );
+            peers.add(PeerModel(device: element));
           }
 
           controller.add(peers);

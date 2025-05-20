@@ -8,6 +8,7 @@ import 'commun/peer_config/domain/repositories/peer_config_repository.dart';
 import 'commun/peer_config/domain/usecases/disconnect_peer_config.dart';
 import 'commun/peer_config/domain/usecases/get_init_peer_config.dart';
 import 'commun/peer_config/presentation/bloc/peer_config_bloc.dart';
+import 'core/errors/app_logger.dart';
 import 'features/chat/data/datasources/chat_local_data_source.dart';
 import 'features/chat/data/datasources/chat_remote_data_source.dart';
 import 'features/chat/data/repositories/chat_repository_impl.dart';
@@ -17,6 +18,13 @@ import 'features/chat/domain/usecases/init_chat.dart';
 import 'features/chat/domain/usecases/send_message.dart';
 import 'features/chat/presentation/bloc/notication_in_screen_bloc/notification_chat_bloc.dart';
 import 'features/chat/presentation/bloc/chat_bloc/chat_bloc.dart';
+import 'features/conversation/data/datasources/conversation_local_data_source.dart';
+import 'features/conversation/data/datasources/conversation_remote_data_source.dart';
+import 'features/conversation/data/repositories/conversation_repository_impl.dart';
+import 'features/conversation/domain/repositories/conversation_repository.dart';
+import 'features/conversation/domain/usecases/get_conversation.dart';
+import 'features/conversation/domain/usecases/save_conversation.dart';
+import 'features/conversation/presentation/bloc/conversation_bloc.dart';
 import 'features/peer/data/datasources/peer_local_data_source.dart';
 import 'features/peer/data/datasources/peer_remote_data_source.dart';
 import 'features/peer/data/repositories/peer_repository_impl.dart';
@@ -25,7 +33,6 @@ import 'features/peer/domain/usecases/disconnect_peer.dart';
 import 'features/peer/domain/usecases/get_check_around.dart';
 import 'features/peer/domain/usecases/get_peers.dart';
 import 'features/peer/domain/usecases/invite_peer.dart';
-import 'features/peer/domain/usecases/save_peers.dart';
 import 'features/peer/presentation/bloc/peer_bloc.dart';
 import 'features/template/data/datasources/template_local_data_source.dart';
 import 'features/template/data/datasources/template_remote_data_source.dart';
@@ -47,6 +54,8 @@ Future<void> initializeApp() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerSingleton<SharedPreferences>(sharedPreferences);
   sl.registerSingleton<DatabaseConfig>(DatabaseConfig.instance);
+  final database = await sl<DatabaseConfig>().database;
+  AppLogger.i('DatabaseConfig: ${database.path}');
 }
 
 Future<void> setupServiceLocator() async {
@@ -54,6 +63,7 @@ Future<void> setupServiceLocator() async {
 
   setUpTemplateServiceLocator();
   setUpPeerConfigServiceLocator();
+  setUpConversationServiceLocator();
   setUpChatServiceLocator();
   setUpPeerServiceLocator();
   setUpNotificationServiceLocator();
@@ -102,10 +112,25 @@ void setUpPeerConfigServiceLocator() {
   // Usecase
   sl.registerSingleton<GetInitPeerConfig>(GetInitPeerConfig());
   sl.registerSingleton<DisconnectPeerConfig>(DisconnectPeerConfig());
-  sl.registerSingleton<SavePeers>(SavePeers());
   sl.registerSingleton<GetPeers>(GetPeers());
   // Bloc
   sl.registerSingleton<PeerConfigBloc>(PeerConfigBloc());
+}
+
+void setUpConversationServiceLocator() {
+  // datasource
+  sl.registerSingleton<ConversationRemoteDataSource>(ConversationRemoteDataSourceImpl());
+  sl.registerSingleton<ConversationLocalDataSource>(ConversationLocalDataSourceImpl());
+
+  // repository
+  sl.registerSingleton<ConversationRepository>(ConversationRepositoryImpl());
+
+  // Usecase
+  sl.registerSingleton<GetConversation>(GetConversation());
+  sl.registerSingleton<SaveConversation>(SaveConversation());
+
+  // Bloc
+  sl.registerSingleton<ConversationBloc>(ConversationBloc());
 }
 
 void setUpChatServiceLocator() {

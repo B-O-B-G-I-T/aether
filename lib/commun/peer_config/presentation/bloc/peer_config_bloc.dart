@@ -6,8 +6,9 @@ import 'package:meta/meta.dart';
 import '../../../../core/errors/app_logger.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/params/peer_config_params.dart';
-import '../../../../core/params/user_params.dart';
+import '../../../../core/params/peer_params.dart';
 import '../../../../features/chat/presentation/bloc/chat_bloc/chat_bloc.dart';
+import '../../../../features/conversation/presentation/bloc/conversation_bloc.dart';
 import '../../../../features/user/presentation/bloc/user_bloc.dart';
 import '../../domain/usecases/disconnect_peer_config.dart';
 import '../../domain/usecases/get_init_peer_config.dart';
@@ -37,7 +38,7 @@ class PeerConfigBloc extends Bloc<PeerConfigEvent, PeerConfigState> {
       if (user is UserLoaded) {
         AppLogger.i('PeerConfigBloc: Utilisateur chargé - Initialisation de la configuration');
         final result = await sl.get<GetInitPeerConfig>().call(
-          param: UserParams(displayName: user.user.displayName, description: user.user.description),
+          param: SavePeersParams(peer: user.user),
         );
 
         result.fold(
@@ -55,6 +56,11 @@ class PeerConfigBloc extends Bloc<PeerConfigEvent, PeerConfigState> {
         final peerBloc = sl.get<PeerBloc>();
         peerBloc.add(GetCheckAroundEvent());
         await _waitForPeerAroundLoaded(peerBloc: peerBloc);
+
+        // wait for conversation loaded
+        final conversationBloc = sl.get<ConversationBloc>();
+        conversationBloc.add(GetConversationsEvent());
+        await _waitForConversationLoaded(conversationBloc: conversationBloc);
 
         // wait for chat loaded
         final chatBloc = sl.get<ChatBloc>();
@@ -106,6 +112,12 @@ class PeerConfigBloc extends Bloc<PeerConfigEvent, PeerConfigState> {
   Future<void> _waitForChatLoaded({required ChatBloc chatBloc}) async {
     await for (final state in chatBloc.stream) {
       if (state is ChatLoaded || state is ChatError) break;
+    }
+  }
+
+  Future<void> _waitForConversationLoaded({required ConversationBloc conversationBloc}) async {
+    await for (final state in conversationBloc.stream) {
+      if (state is ConversationLoaded || state is ConversationError) break;
     }
   }
 

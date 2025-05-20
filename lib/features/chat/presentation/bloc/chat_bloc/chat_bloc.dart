@@ -43,7 +43,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
               // Notifier le bloc de notification pour chaque nouveau message
               for (final message in messages) {
                 sl<NotificationChatBloc>().add(NewMessageReceived(message));
-               
               }
 
               emit(ChatLoaded(messages: List.from(_messages)));

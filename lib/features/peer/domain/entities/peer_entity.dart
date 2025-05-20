@@ -26,7 +26,7 @@ class PeerEntity {
     final deviceJson = device.toJson();
     final String deviceId = deviceJson[kPeerId];
     final String deviceName = deviceJson[kPeerName];
-    final String deviceState = deviceJson[kState];
+    final int deviceState = deviceJson[kState];
     final String? deviceDescription = deviceJson[kPeerDescription];
     return {
       kPeerId: deviceId,

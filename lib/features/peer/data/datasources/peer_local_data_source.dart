@@ -1,13 +1,9 @@
-import 'package:sqflite/sqflite.dart';
-
 import '../../../../core/constants/peer_constant.dart';
-import '../../../../core/params/peer_params.dart';
 import '../../../../service_locator.dart';
 import '../../../../commun/peer_config/data/datasources/database_config.dart';
 import '../models/peer_model.dart';
 
 abstract class PeerLocalDataSource {
-  Future<void> savePeer(SavePeersParams savePeersParams);
   Future<List<PeerModel>> getPeers();
   Future<List<PeerModel>> getPeerByDeviceId(String deviceId);
   Future<void> updatePeer(PeerModel peer);
@@ -18,19 +14,6 @@ class PeerLocalDataSourceImpl implements PeerLocalDataSource {
   final DatabaseConfig _database;
 
   PeerLocalDataSourceImpl() : _database = sl<DatabaseConfig>();
-
-  @override
-  Future<void> savePeer(SavePeersParams savePeersParams) async {
-    final db = await _database.database;
-    await db.insert('peers', {
-      kPeerId: savePeersParams.peer.device.deviceId,
-      kPeerName: savePeersParams.peer.device.deviceName,
-      kPeerDescription: savePeersParams.peer.device.deviceName,
-      kPeerPathImageProfile: savePeersParams.peer.pathImageProfile,
-      kPeerMyLastStartEncodeImage: savePeersParams.peer.myLastStartEncodeImage,
-      kState: savePeersParams.peer.device.state.toString(),
-    }, conflictAlgorithm: ConflictAlgorithm.replace);
-  }
 
   @override
   Future<List<PeerModel>> getPeers() async {
@@ -62,7 +45,7 @@ class PeerLocalDataSourceImpl implements PeerLocalDataSource {
         kPeerDescription: peer.device.deviceName,
         kPeerPathImageProfile: peer.pathImageProfile,
         kPeerMyLastStartEncodeImage: peer.myLastStartEncodeImage,
-        kState: peer.device.state.toString(),
+        kState: peer.device.state.index,
       },
       where: '$kPeerId = ?',
       whereArgs: [peer.device.deviceId],

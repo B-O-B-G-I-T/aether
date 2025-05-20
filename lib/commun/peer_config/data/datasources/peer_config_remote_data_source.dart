@@ -1,9 +1,9 @@
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import '../../../../core/params/peer_config_params.dart';
-import '../../../../core/params/user_params.dart';
+import '../../../../core/params/peer_params.dart';
 
 abstract class PeerConfigRemoteDataSource {
-  Future<NearbyService> init({required UserParams userParams});
+  Future<NearbyService> init({required SavePeersParams peerParams});
   Future<void> disconnect({required DisconnectPeerConfigParams params});
 }
 
@@ -11,20 +11,20 @@ class PeerConfigRemoteDataSourceImpl implements PeerConfigRemoteDataSource {
   PeerConfigRemoteDataSourceImpl();
 
   @override
-  Future<NearbyService> init({required UserParams userParams}) async {
-    final NearbyService nearbyService = await initiateNearbyService(userParams);
+  Future<NearbyService> init({required SavePeersParams peerParams}) async {
+    final NearbyService nearbyService = await initiateNearbyService(peerParams);
 
     return nearbyService;
   }
 
   // Initiating NearbyService to start the connection
-  Future<NearbyService> initiateNearbyService(UserParams userParams) async {
+  Future<NearbyService> initiateNearbyService(SavePeersParams peerParams) async {
     NearbyService nearbyService = NearbyService();
     await nearbyService.init(
       serviceType: 'mp-connection',
 
-      deviceName: userParams.displayName,
-      description: userParams.description,
+      deviceName: peerParams.peer.device.deviceName,
+      description: peerParams.peer.device.deviceDescription,
       strategy: Strategy.P2P_CLUSTER,
       callback: (isRunning) async {
         if (isRunning) {

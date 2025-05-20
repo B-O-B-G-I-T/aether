@@ -8,7 +8,7 @@ final class UserInitial extends UserState {}
 final class UserLoading extends UserState {}
 
 final class UserLoaded extends UserState {
-  final UserEntity user;
+  final PeerEntity user;
 
   UserLoaded({required this.user});
 }

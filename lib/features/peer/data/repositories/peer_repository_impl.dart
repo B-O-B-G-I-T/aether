@@ -44,15 +44,6 @@ class PeerRepositoryImpl implements PeerRepository {
     }
   }
 
-  @override
-  Future<Either<Failure, void>> savePeers({required SavePeersParams savePeersParams}) async {
-    try {
-      await sl<PeerLocalDataSource>().savePeer(savePeersParams);
-      return Right(null);
-    } catch (e) {
-      return Left(ServerFailure(errorMessage: e.toString()));
-    }
-  }
 
   @override
   Future<Either<Failure, List<PeerEntity>>> getPeers() async {

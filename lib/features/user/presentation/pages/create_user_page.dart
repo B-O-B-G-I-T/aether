@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
+import 'package:uuid/uuid.dart';
 import '../../../../core/errors/app_logger.dart';
-import '../../../../core/params/user_params.dart';
-import '../../../../features/user/domain/usecases/set_user.dart';
+import '../../../../core/params/peer_params.dart';
+import '../../../peer/domain/entities/peer_entity.dart';
+import '../../domain/usecases/set_user.dart';
 import '../../../../service_locator.dart';
-import '../bloc/peer_config_bloc.dart';
+import '../../../../commun/peer_config/presentation/bloc/peer_config_bloc.dart';
 
 class CreateUserPage extends StatelessWidget {
   const CreateUserPage({super.key});
@@ -23,7 +26,10 @@ class CreateUserPage extends StatelessWidget {
               onPressed: () async {
                 final String displayName = displayNameController.text.trim();
                 final String description = descriptionController.text.trim();
-                final user = UserParams(displayName: displayName, description: description);
+                final String deviceId = Uuid().v4();
+                
+                final device = Device(deviceId, displayName, SessionState.notConnected, deviceDescription: description);
+                final user = SavePeersParams(peer: PeerEntity(device: device));
                 final result = await sl<SetUser>().call(param: user);
                 result.fold(
                   (failure) {

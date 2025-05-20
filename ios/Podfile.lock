@@ -43,14 +43,14 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite_darwin/darwin"
 
 SPEC CHECKSUMS:
-  camera_avfoundation: dd002b0330f4981e1bbcb46ae9b62829237459a4
+  camera_avfoundation: 04b44aeb14070126c6529e5ab82cc7c9fca107cf
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_nearby_connections: 68c6cb88dcbf781e74adac01f4e93b853a30ee34
-  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
-  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
-  sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
+  flutter_nearby_connections: 1c977358b344997fe3b52f97be62f7a238e1dbf0
+  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
+  shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
+  sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
   SwiftyJSON: 6faa0040f8b59dead0ee07436cbf76b73c08fd08
 
-PODFILE CHECKSUM: 248df7dff8d54926c9ea0a1616538cecf72c6b67
+PODFILE CHECKSUM: c1ab3e0c0a24aa94f9629a0f29326fd9a5898095
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

@@ -2,15 +2,18 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:meta/meta.dart';
 import '../../../../core/errors/failure.dart';
+import '../../../../core/params/conversation_params.dart';
 import '../../../../core/params/peer_params.dart';
 import '../../../../service_locator.dart';
+import '../../../conversation/domain/entities/conversation_entity.dart';
+import '../../../conversation/presentation/bloc/conversation_bloc.dart';
+import '../../../user/presentation/bloc/user_bloc.dart';
 import '../../domain/entities/peer_entity.dart';
 import '../../domain/usecases/disconnect_peer.dart';
 import '../../domain/usecases/get_check_around.dart';
 import '../../domain/usecases/get_peer.dart';
 import '../../domain/usecases/get_peers.dart';
 import '../../domain/usecases/invite_peer.dart';
-import '../../domain/usecases/save_peers.dart';
 
 part 'peer_event.dart';
 part 'peer_state.dart';
@@ -39,7 +42,6 @@ class PeerBloc extends Bloc<PeerEvent, PeerState> {
           await for (final peers in streamPeers) {
             if (!emit.isDone) {
               // ici metre la logique des peers
-
               final connectedPeers = <PeerEntity>[];
               final peersAround = <PeerEntity>[];
               if (peers.isNotEmpty) {
@@ -47,7 +49,14 @@ class PeerBloc extends Bloc<PeerEvent, PeerState> {
                   if (peer.device.state == SessionState.connected) {
                     connectedPeers.add(peer);
 
-                    await _savePeer(peer, emit);
+                    sl<UserBloc>().add(SetUserEvent(userParams: SavePeersParams(peer: peer)));
+                    sl<ConversationBloc>().add(
+                      SaveConversationEvent(
+                        conversationParams: SaveConversationParams(
+                          conversation: ConversationEntity(peerId: peer.device.deviceId, lastMessage: '', lastActivity: ''),
+                        ),
+                      ),
+                    );
                   }
 
                   peersAround.add(peer);
@@ -97,14 +106,6 @@ class PeerBloc extends Bloc<PeerEvent, PeerState> {
           emit(PeerError(failure: failure));
         }
       }, (success) async {});
-    } catch (e) {
-      emit(PeerError(failure: ServerFailure(errorMessage: e.toString())));
-    }
-  }
-
-  Future<void> _savePeer(PeerEntity peer, Emitter<PeerState> emit) async {
-    try {
-      await sl<SavePeers>().call(param: SavePeersParams(peer: peer));
     } catch (e) {
       emit(PeerError(failure: ServerFailure(errorMessage: e.toString())));
     }

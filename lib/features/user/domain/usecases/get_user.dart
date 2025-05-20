@@ -3,14 +3,14 @@ import '../../../../../core/errors/failure.dart';
 import '../../../../core/constants/usecase/usecase.dart';
 import '../../../../core/params/params.dart';
 import '../../../../service_locator.dart';
-import '../entities/user_entity.dart';
+import '../../../peer/domain/entities/peer_entity.dart';
 import '../repositories/user_repository.dart';
 
-class GetUser implements UseCase<UserEntity?, NoParams> {
+class GetUser implements UseCase<PeerEntity?, NoParams> {
   GetUser();
 
   @override
-  Future<Either<Failure, UserEntity?>> call({
+  Future<Either<Failure, PeerEntity?>> call({
     required NoParams param,
   }) async {
     return await sl<UserRepository>().getUser();

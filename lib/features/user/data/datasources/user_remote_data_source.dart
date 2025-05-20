@@ -1,8 +1,9 @@
-import '../../../../core/params/user_params.dart';
-import '../models/user_model.dart';
+import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
+import '../../../../core/params/peer_params.dart';
+import '../../../peer/data/models/peer_model.dart';
 
 abstract class UserRemoteDataSource {
-  Future<UserModel>   getUser({required UserParams userParams});
+  Future<PeerModel>   getUser({required SavePeersParams userParams});
 }
 
 class UserRemoteDataSourceImpl implements UserRemoteDataSource {
@@ -10,8 +11,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   UserRemoteDataSourceImpl();
 
   @override
-  Future<UserModel> getUser({required UserParams userParams}) async {
+  Future<PeerModel> getUser({required SavePeersParams userParams}) async {
     
-    return UserModel( displayName: 'User 1', description: 'Description 1');
+    return PeerModel(device: Device(userParams.peer.device.deviceId, userParams.peer.device.deviceName, userParams.peer.device.state, deviceDescription: userParams.peer.device.deviceDescription), myLastStartEncodeImage: userParams.peer.myLastStartEncodeImage,pathImageProfile: userParams.peer.pathImageProfile, );
   }
 }

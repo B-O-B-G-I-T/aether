@@ -1,4 +1,6 @@
 String kLastMessage = 'lastMessage';
 String kLastActivity = 'lastActivity';
 
-const cachedMessages = 'CACHED_MESSAGES';
+const kConversation = 'conversation';
+
+const cachedConversation = 'CACHED_CONVERSATION';

@@ -3,8 +3,10 @@ import 'package:aether/features/chat/presentation/bloc/notication_in_screen_bloc
 import 'package:aether/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'commun/peer_config/data/datasources/database_config.dart';
 import 'commun/peer_config/presentation/bloc/peer_config_bloc.dart';
-import 'commun/peer_config/presentation/pages/create_user_page.dart';
+import 'features/conversation/presentation/bloc/conversation_bloc.dart';
+import 'features/user/presentation/pages/create_user_page.dart';
 import 'core/errors/app_logger.dart';
 import 'core/route/go_router_provider.dart';
 import 'features/peer/presentation/bloc/peer_bloc.dart';
@@ -27,16 +29,18 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => sl<PeerConfigBloc>()..add(GetInitPeerConfigEvent())),
-        BlocProvider(create: (context) => sl<ChatBloc>()),
         BlocProvider(create: (context) => sl<PeerBloc>()),
+        BlocProvider(create: (context) => sl<ConversationBloc>()),
+        BlocProvider(create: (context) => sl<ChatBloc>()),
         BlocProvider(create: (context) => sl<NotificationChatBloc>()),
         BlocProvider(create: (context) => sl<UserBloc>()),
       ],
 
       child: BlocBuilder<PeerConfigBloc, PeerConfigState>(
         builder: (context, state) {
-          AppLogger.i('Main: État actuel - ${state.runtimeType}');
           // sl<DatabaseConfig>().clearDatabase();
+          // sl<DatabaseConfig>().insertTestData();
+          AppLogger.i('Main: État actuel - ${state.runtimeType}');
           if (state is PeerConfigInitialised) {
             AppLogger.i('Main: Configuration initialisée - Affichage de l\'application');
             return MaterialApp.router(debugShowCheckedModeBanner: false, routerConfig: router);

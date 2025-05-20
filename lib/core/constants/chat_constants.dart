@@ -6,4 +6,5 @@ String kSenderId = 'senderId';
 String kReceiverId = 'receiverId';
 String kTimestamp = 'timestamp';
 String kType = 'type';
+String kConversationId = 'conversationId';
 const cachedMessages = 'CACHED_MESSAGES';

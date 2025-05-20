@@ -1,11 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-
 import '../../../../core/errors/failure.dart';
 import '../../../../core/params/params.dart';
-import '../../../../core/params/user_params.dart';
+import '../../../../core/params/peer_params.dart';
 import '../../../../service_locator.dart';
-import '../../domain/entities/user_entity.dart';
+import '../../../peer/domain/entities/peer_entity.dart';
 import '../../domain/usecases/disconnect.dart';
 import '../../domain/usecases/get_user.dart';
 import '../../domain/usecases/set_user.dart';

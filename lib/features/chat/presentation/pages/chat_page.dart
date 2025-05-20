@@ -139,7 +139,7 @@ class _ChatPageState extends State<ChatPage> {
                       final peer = state.connectedPeers!.where((peer) => peer.device.deviceId == widget.peer.device.deviceId).firstOrNull;
                       if (_messageController.text.isNotEmpty && peer != null) {
                         if (context.read<UserBloc>().state is UserLoaded && peer.device.state == SessionState.connected) {
-                          final currentUserId = (context.read<UserBloc>().state as UserLoaded).user.displayName;
+                          final currentUserId = (context.read<UserBloc>().state as UserLoaded).user.device.deviceId;
                           final params = SendMessageParams(
                             content: _messageController.text,
                             receiverId: widget.peer.device.deviceId,
@@ -180,7 +180,7 @@ class MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isMe = false;
     if (context.read<UserBloc>().state is UserLoaded) {
-      final currentUserId = (context.read<UserBloc>().state as UserLoaded).user.displayName;
+      final currentUserId = (context.read<UserBloc>().state as UserLoaded).user.device.deviceId;
       isMe = message.senderId == currentUserId; // À adapter selon votre logique d'identification
     }
     return Padding(

@@ -9,7 +9,7 @@ class GetUserEvent extends UserEvent {
 }
 
 class SetUserEvent extends UserEvent {
-  final UserParams userParams;
+  final SavePeersParams userParams;
 
   SetUserEvent({required this.userParams});
 }

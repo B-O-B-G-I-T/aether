@@ -14,9 +14,7 @@ abstract class PeerRepository {
   Future<Either<Failure, List<PeerEntity>>> disconnectPeer({
     required PeerParams peerParams,
   });
-  Future<Either<Failure, void>> savePeers({
-    required SavePeersParams savePeersParams,
-  });
+  
   Future<Either<Failure, List<PeerEntity>>> getPeers();
 
   Future<Either<Failure, List<PeerEntity>>> getPeer({

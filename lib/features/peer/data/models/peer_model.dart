@@ -11,7 +11,7 @@ class PeerModel extends PeerEntity {
 
   factory PeerModel.fromJson({required Map<String, dynamic> json}) {
     return PeerModel(
-      device: Device(json[kPeerId], json[kPeerName], json[kState], deviceDescription: json[kPeerDescription]),
+      device: Device(json[kPeerId], json[kPeerName], json[kState] ?? SessionState.notConnected, deviceDescription: json[kPeerDescription]),
       pathImageProfile: json[kPeerPathImageProfile] ?? '',
       myLastStartEncodeImage: json[kPeerMyLastStartEncodeImage] ?? '',
     );

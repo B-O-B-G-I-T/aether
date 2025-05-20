@@ -1,11 +1,11 @@
 import 'package:dartz/dartz.dart';
 import '../../../../../core/errors/failure.dart';
-import '../../../../core/params/user_params.dart';
-import '../entities/user_entity.dart';
+import '../../../../core/params/peer_params.dart';
+import '../../../peer/domain/entities/peer_entity.dart';
 
 
 abstract class UserRepository {
-  Future<Either<Failure, UserEntity?>> getUser();
-  Future<Either<Failure, UserEntity>> setUser({required UserParams userParams});
+  Future<Either<Failure, PeerEntity?>> getUser();
+  Future<Either<Failure, PeerEntity>> setUser({required SavePeersParams userParams});
   Future<Either<Failure, void>> disconnect();
 }
