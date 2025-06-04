@@ -187,15 +187,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_nearby_connections:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "2f4747648a2fb6a4b6a9e171051988e77373ee4a"
-      url: "https://github.com/B-O-B-G-I-T/flutter_nearby_connections.git"
-    source: git
-    version: "1.1.2"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -310,6 +301,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.16.0"
+  nearby_service:
+    dependency: "direct main"
+    description:
+      name: nearby_service
+      sha256: af10a37d156e317d3b5aafa72cd532add280546df2e0eb14ee6e343d40e5c36a
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.0"
   nested:
     dependency: transitive
     description:

@@ -61,9 +61,10 @@ dependencies:
   uuid: ^4.5.1
 
   # peer-to-peer
-  flutter_nearby_connections:
-    git:
-      url: https://github.com/B-O-B-G-I-T/flutter_nearby_connections.git
+  # flutter_nearby_connections:
+  #   git:
+  #     url: https://github.com/B-O-B-G-I-T/flutter_nearby_connections.git
+  nearby_service: ^0.2.0
 
 
 dev_dependencies:
