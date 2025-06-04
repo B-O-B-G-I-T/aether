@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/params/conversation_params.dart';
+import '../../domain/usecases/get_conversation.dart';
 import '../../domain/usecases/get_conversations.dart';
 import '../../domain/usecases/save_conversation.dart';
 
@@ -17,6 +18,7 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
     });
     on<GetConversationsEvent>((event, emit) => _getConversations(event, emit));
     on<SaveConversationEvent>((event, emit) => _saveConversation(event, emit));
+    on<GetConversationEvent>((event, emit) => _getConversation(event, emit));
   }
 
   _getConversations(GetConversationsEvent event, Emitter<ConversationState> emit) async {
@@ -49,6 +51,28 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
           oldConversationEntity.add(event.conversationParams.conversation);
           emit(ConversationLoaded(conversationEntity: oldConversationEntity));
         }
+      },
+    );
+  }
+
+  _getConversation(GetConversationEvent event, Emitter<ConversationState> emit) async {
+    emit(ConversationLoading());
+
+    final result = await sl<GetConversation>().call(param: GetConversationParams(senderId: event.senderId, receiverId: event.receiverId));
+
+    result.fold(
+      (failure) {
+        emit(ConversationError(failure: failure));
+        final conversation = ConversationEntity(
+          lastMessage: '',
+          lastActivity: DateTime.now().toIso8601String(),
+          peerId: event.senderId,
+        );
+
+        _saveConversation(SaveConversationEvent(conversationParams: SaveConversationParams(conversation: conversation)), emit);
+      },
+      (conversation) {
+        emit(ConversationLoaded(conversationEntity: [conversation]));
       },
     );
   }

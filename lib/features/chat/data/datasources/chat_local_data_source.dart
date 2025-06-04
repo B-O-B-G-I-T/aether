@@ -26,7 +26,9 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
   Future<List<MessageModel>> getMessages() async {
     final db = await _database.database;
     final List<Map<String, dynamic>> maps = await db.query('messages');
-    return List.generate(maps.length, (i) => MessageModel.fromJson(json: maps[i]));
+
+    final messages = maps.map((e) => MessageModel.fromJson(json: e)).toList();
+    return messages;
   }
 
   @override
@@ -45,5 +47,4 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
     final db = await _database.database;
     await db.delete('messages');
   }
-
 }

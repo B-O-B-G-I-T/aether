@@ -1,3 +1,4 @@
+import 'package:aether/features/conversation/domain/usecases/get_conversations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'commun/peer_config/data/datasources/database_config.dart';
@@ -15,9 +16,11 @@ import 'features/chat/data/repositories/chat_repository_impl.dart';
 import 'features/chat/domain/repositories/chat_repository.dart';
 import 'features/chat/domain/usecases/get_conversation_messages.dart';
 import 'features/chat/domain/usecases/init_chat.dart';
+import 'features/chat/domain/usecases/save_message.dart';
 import 'features/chat/domain/usecases/send_message.dart';
-import 'features/chat/presentation/bloc/notication_in_screen_bloc/notification_chat_bloc.dart';
 import 'features/chat/presentation/bloc/chat_bloc/chat_bloc.dart';
+import 'features/chat/presentation/bloc/notication_in_screen_bloc/notification_chat_bloc.dart';
+import 'features/chat/presentation/bloc/init_chat_bloc/init_chat_bloc.dart';
 import 'features/conversation/data/datasources/conversation_local_data_source.dart';
 import 'features/conversation/data/datasources/conversation_remote_data_source.dart';
 import 'features/conversation/data/repositories/conversation_repository_impl.dart';
@@ -126,6 +129,7 @@ void setUpConversationServiceLocator() {
   sl.registerSingleton<ConversationRepository>(ConversationRepositoryImpl());
 
   // Usecase
+  sl.registerSingleton<GetConversations>(GetConversations());
   sl.registerSingleton<GetConversation>(GetConversation());
   sl.registerSingleton<SaveConversation>(SaveConversation());
 
@@ -143,10 +147,12 @@ void setUpChatServiceLocator() {
 
   // Usecase
   sl.registerSingleton<InitChat>(InitChat());
+  sl.registerSingleton<SaveMessage>(SaveMessage());
   sl.registerSingleton<SendMessage>(SendMessage());
   sl.registerSingleton<GetConversationMessages>(GetConversationMessages());
 
   // Bloc
+  sl.registerSingleton<InitChatBloc>(InitChatBloc());
   sl.registerSingleton<ChatBloc>(ChatBloc());
 }
 

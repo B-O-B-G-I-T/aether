@@ -1,6 +1,7 @@
 import 'package:aether/features/conversation/domain/entities/conversation_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../service_locator.dart';
 import '../bloc/conversation_bloc.dart';
 
 class ConversationPage extends StatelessWidget {
@@ -16,7 +17,7 @@ class ConversationPage extends StatelessWidget {
             return Center(child: CircularProgressIndicator());
           } else if (state is ConversationLoaded) {
             return ListView.builder(
-              itemCount: 10, // Pour l'exemple, nous affichons 10 conversations
+              itemCount: state.conversationEntity.length, // Pour l'exemple, nous affichons 10 conversations
               itemBuilder: (context, index) {
                 final ConversationEntity conversationEntity = state.conversationEntity[index];
                 return Card(
@@ -43,6 +44,7 @@ class ConversationPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          sl<ConversationBloc>().add(GetConversationsEvent());
           // Action pour créer une nouvelle conversation
         },
         child: const Icon(Icons.add),

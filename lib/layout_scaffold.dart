@@ -27,7 +27,7 @@ class LayoutScaffold extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildNavItem(0, 'Accueil', Icons.home),
-              _buildNavItem(1, 'Chat', Icons.chat),
+              _buildNavItem(1, 'Peer Meet', Icons.wifi_tethering),
               // _buildNavItem(2, 'Panier', 'assets/icon_bottombar/shopping-bag.svg', context: context),
               _buildNavItem(2, 'Favoris', Icons.favorite),
               _buildNavItem(3, 'Compte', Icons.person),

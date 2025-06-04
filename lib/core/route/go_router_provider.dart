@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../features/conversation/presentation/pages/conversation_page.dart';
 import '../../features/peer/domain/entities/peer_entity.dart';
+import '../../features/peer/presentation/pages/list_peer_meet_around.dart';
 import '../../features/peer/presentation/pages/peer_around_page.dart';
-import '../../features/template/presentation/pages/template_page.dart';
 import '../../features/user/presentation/pages/user_page.dart';
 import '../../layout_scaffold.dart';
 import 'route_name.dart';
@@ -38,7 +38,7 @@ final router = GoRouter(
         ),
 
         // route pour la page de recherche
-        StatefulShellBranch(routes: [GoRoute(path: connectionRoute, builder: (context, state) => const TemplatePage())]),
+        StatefulShellBranch(routes: [GoRoute(path: connectionRoute, builder: (context, state) => const ListPeerMeetAround())]),
 
         // route pour la page de favoris
         StatefulShellBranch(routes: [GoRoute(path: conversationsRoute, builder: (context, state) => const ConversationPage())]),
@@ -49,6 +49,6 @@ final router = GoRouter(
     ),
 
     // autre
-    GoRoute(path: homeRoute, builder: (context, state) => const TemplatePage()),
+    // GoRoute(path: homeRoute, builder: (context, state) => const TemplatePage()),
   ],
 );

@@ -1,60 +1,28 @@
 import 'package:aether/service_locator.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
+
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/chat_params.dart';
-import '../../../../../core/params/peer_params.dart';
 import '../../../../peer/domain/entities/peer_entity.dart';
 import '../../../domain/entities/message_entity.dart';
 import '../../../domain/usecases/get_conversation_messages.dart';
-import '../../../domain/usecases/init_chat.dart';
 import '../../../domain/usecases/send_message.dart';
-import '../notication_in_screen_bloc/notification_chat_bloc.dart';
+
 part 'chat_event.dart';
 part 'chat_state.dart';
 
-// Bloc
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatBloc() : super(ChatInitial()) {
-    on<InitializeP2PEvent>(_onInitializeP2P);
+    on<ChatEvent>((event, emit) {});
+    on<AddNewMessageIfInConversation>(_onAddNewMessageIfInConversation);
     on<SendMessageEvent>(_onSendMessage);
     on<GetConversationMessagesEvent>(_onGetConversationMessages);
   }
 
   final List<MessageEntity> _messages = [];
 
-  Future<void> _onInitializeP2P(InitializeP2PEvent event, Emitter<ChatState> emit) async {
-    try {
-      emit(ChatLoading());
-      final result = await sl<InitChat>().call(param: PeerParams(peerId: event.receiverId));
-
-      await result.fold(
-        (failure) async {
-          emit(ChatError(failure));
-        },
-        (streamMessages) async {
-          emit(ChatLoaded(messages: List.from(_messages)));
-
-          await for (final messages in streamMessages) {
-            if (!emit.isDone) {
-              _messages.addAll(messages);
-
-              // Notifier le bloc de notification pour chaque nouveau message
-              for (final message in messages) {
-                sl<NotificationChatBloc>().add(NewMessageReceived(message));
-              }
-
-              emit(ChatLoaded(messages: List.from(_messages)));
-            }
-          }
-        },
-      );
-    } catch (e) {
-      emit(ChatError(ServerFailure(errorMessage: e.toString())));
-    }
-  }
-
+  // envoyer un message
   Future<void> _onSendMessage(SendMessageEvent event, Emitter<ChatState> emit) async {
     try {
       final result = await sl<SendMessage>().call(param: event.message);
@@ -75,6 +43,15 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
   }
 
+  // ajouter un message
+  Future<void> _onAddNewMessageIfInConversation(AddNewMessageIfInConversation event, Emitter<ChatState> emit) async {
+    if (_messages.any((message) => message.id == event.message.id)) {
+      _messages.add(event.message);
+      emit(ChatLoaded(messages: List.from(_messages)));
+    }
+  }
+
+  // récupérer les messages de la conversation
   Future<void> _onGetConversationMessages(GetConversationMessagesEvent event, Emitter<ChatState> emit) async {
     try {
       _messages.clear();

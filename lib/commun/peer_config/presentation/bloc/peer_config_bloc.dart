@@ -7,7 +7,7 @@ import '../../../../core/errors/app_logger.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/params/peer_config_params.dart';
 import '../../../../core/params/peer_params.dart';
-import '../../../../features/chat/presentation/bloc/chat_bloc/chat_bloc.dart';
+import '../../../../features/chat/presentation/bloc/init_chat_bloc/init_chat_bloc.dart';
 import '../../../../features/conversation/presentation/bloc/conversation_bloc.dart';
 import '../../../../features/user/presentation/bloc/user_bloc.dart';
 import '../../domain/usecases/disconnect_peer_config.dart';
@@ -63,7 +63,7 @@ class PeerConfigBloc extends Bloc<PeerConfigEvent, PeerConfigState> {
         await _waitForConversationLoaded(conversationBloc: conversationBloc);
 
         // wait for chat loaded
-        final chatBloc = sl.get<ChatBloc>();
+        final chatBloc = sl.get<InitChatBloc>();
         chatBloc.add(InitializeP2PEvent(receiverId: 'receiverId'));
         await _waitForChatLoaded(chatBloc: chatBloc);
 
@@ -109,9 +109,9 @@ class PeerConfigBloc extends Bloc<PeerConfigEvent, PeerConfigState> {
     }
   }
 
-  Future<void> _waitForChatLoaded({required ChatBloc chatBloc}) async {
+  Future<void> _waitForChatLoaded({required InitChatBloc chatBloc}) async {
     await for (final state in chatBloc.stream) {
-      if (state is ChatLoaded || state is ChatError) break;
+      if (state is InitChatLoaded || state is InitChatError) break;
     }
   }
 

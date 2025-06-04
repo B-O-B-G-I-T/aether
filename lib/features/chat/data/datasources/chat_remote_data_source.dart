@@ -72,13 +72,12 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       final MessageModel messageModel = MessageModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         content: params.content,
-        senderId: params.senderId,
-        receiverId: params.receiverId,
+        conversationId: params.sendTo,
         timestamp: DateTime.now(),
         type: params.type,
       );
 
-      nearbyService.sendMessage(params.receiverId, jsonEncode(messageModel.toJson()));
+      nearbyService.sendMessage(params.sendTo, jsonEncode(messageModel.toJson()));
 
       return messageModel;
     } catch (e) {

@@ -11,7 +11,7 @@ class Utils {
       final extra = GoRouterState.of(context).extra as PeerEntity;
 
       // Vérifier si l'utilisateur est dans le chat avec l'expéditeur du message
-      return extra.device.deviceId == message.senderId;
+      return extra.device.deviceId == message.conversationId;
     }
     return false;
   }

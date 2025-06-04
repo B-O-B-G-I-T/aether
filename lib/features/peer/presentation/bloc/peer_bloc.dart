@@ -39,13 +39,25 @@ class PeerBloc extends Bloc<PeerEvent, PeerState> {
           }
         },
         (streamPeers) async {
-          await for (final peers in streamPeers) {
+          await for (var peers in streamPeers) {
             if (!emit.isDone) {
               // ici metre la logique des peers
               final connectedPeers = <PeerEntity>[];
               final peersAround = <PeerEntity>[];
               if (peers.isNotEmpty) {
-                for (final peer in peers) {
+                for (var peer in peers) {
+                  // if (peer.device.state == SessionState.connecting) {
+                  //   AppLogger.i("Connecting ${peer.device.deviceId} ${peer.device.state}");
+                  //   // TODO: on force le passage à connected il faudrait trouver une meilleure solution
+                  //   peers =
+                  //       peers.map((d) {
+                  //         if (d.device.deviceId == peer.device.deviceId) {
+                  //           d.device.state = SessionState.connected;
+                  //         }
+                  //         return d;
+                  //       }).toList();
+                  // }
+                  
                   if (peer.device.state == SessionState.connected) {
                     connectedPeers.add(peer);
 

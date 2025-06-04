@@ -139,11 +139,10 @@ class _ChatPageState extends State<ChatPage> {
                       final peer = state.connectedPeers!.where((peer) => peer.device.deviceId == widget.peer.device.deviceId).firstOrNull;
                       if (_messageController.text.isNotEmpty && peer != null) {
                         if (context.read<UserBloc>().state is UserLoaded && peer.device.state == SessionState.connected) {
-                          final currentUserId = (context.read<UserBloc>().state as UserLoaded).user.device.deviceId;
+
                           final params = SendMessageParams(
                             content: _messageController.text,
-                            receiverId: widget.peer.device.deviceId,
-                            senderId: currentUserId,
+                            sendTo: widget.peer.device.deviceId,
                             type: 'text',
                             timestamp: DateTime.now().toIso8601String(),
                           );
@@ -181,7 +180,7 @@ class MessageBubble extends StatelessWidget {
     bool isMe = false;
     if (context.read<UserBloc>().state is UserLoaded) {
       final currentUserId = (context.read<UserBloc>().state as UserLoaded).user.device.deviceId;
-      isMe = message.senderId == currentUserId; // À adapter selon votre logique d'identification
+      isMe = message.conversationId == currentUserId; // À adapter selon votre logique d'identification
     }
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
@@ -189,7 +188,7 @@ class MessageBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            isMe ? 'Moi' : message.senderId,
+            isMe ? 'Moi' : message.conversationId,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 12, fontWeight: FontWeight.bold, color: isMe ? Colors.red : Colors.grey),
           ),
           const SizedBox(height: 2),

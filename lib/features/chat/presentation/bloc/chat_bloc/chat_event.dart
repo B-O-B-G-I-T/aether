@@ -1,23 +1,26 @@
 part of 'chat_bloc.dart';
 
-@immutable
-sealed class ChatEvent  {}
+sealed class ChatEvent extends Equatable {
+  const ChatEvent();
 
-class InitializeP2PEvent extends ChatEvent  {
-  final String receiverId;
-
-  InitializeP2PEvent({required this.receiverId});
+  @override
+  List<Object> get props => [];
 }
 
 class SendMessageEvent extends ChatEvent {
   final SendMessageParams message;
 
-  SendMessageEvent({required this.message});
+  const SendMessageEvent({required this.message});
+}
+
+class AddNewMessageIfInConversation extends ChatEvent {
+  final MessageEntity message;
+
+  const AddNewMessageIfInConversation({required this.message});
 }
 
 class GetConversationMessagesEvent extends ChatEvent {
   final PeerEntity peer;
 
-  GetConversationMessagesEvent({required this.peer});
+  const GetConversationMessagesEvent({required this.peer});
 }
-

@@ -1,4 +1,4 @@
-class ConversationEntity {
+class ConversationEntity  {
   final String lastMessage;
   final String lastActivity;
   final String peerId;

@@ -1,10 +1,10 @@
-import 'package:aether/features/chat/presentation/bloc/chat_bloc/chat_bloc.dart';
+import 'package:aether/features/chat/presentation/bloc/init_chat_bloc/init_chat_bloc.dart';
 import 'package:aether/features/chat/presentation/bloc/notication_in_screen_bloc/notification_chat_bloc.dart';
 import 'package:aether/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'commun/peer_config/data/datasources/database_config.dart';
 import 'commun/peer_config/presentation/bloc/peer_config_bloc.dart';
+import 'features/chat/presentation/bloc/chat_bloc/chat_bloc.dart';
 import 'features/conversation/presentation/bloc/conversation_bloc.dart';
 import 'features/user/presentation/pages/create_user_page.dart';
 import 'core/errors/app_logger.dart';
@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => sl<PeerConfigBloc>()..add(GetInitPeerConfigEvent())),
         BlocProvider(create: (context) => sl<PeerBloc>()),
         BlocProvider(create: (context) => sl<ConversationBloc>()),
+        BlocProvider(create: (context) => sl<InitChatBloc>()),
         BlocProvider(create: (context) => sl<ChatBloc>()),
         BlocProvider(create: (context) => sl<NotificationChatBloc>()),
         BlocProvider(create: (context) => sl<UserBloc>()),

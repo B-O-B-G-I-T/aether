@@ -36,6 +36,16 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
+  Future<Either<Failure, void>> saveMessage({required MessageEntity message}) async {
+    try {
+      await sl<ChatLocalDataSource>().saveMessage(message: message.toModel());
+      return Right(null);
+    } catch (e) {
+      return Left(ServerFailure(errorMessage: e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, MessageEntity>> sendMessage({required SendMessageParams params}) async {
     try {
       final MessageModel message = await sl<ChatRemoteDataSource>().sendMessage(params: params);

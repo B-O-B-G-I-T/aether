@@ -36,10 +36,10 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
     await db.insert('peers', {
       kPeerId: userParams.peer.device.deviceId,
       kPeerName: userParams.peer.device.deviceName,
+      kState: userParams.peer.device.state.index,
       kPeerDescription: userParams.peer.device.deviceName,
       kPeerPathImageProfile: userParams.peer.pathImageProfile,
       kPeerMyLastStartEncodeImage: userParams.peer.myLastStartEncodeImage,
-      kState: userParams.peer.device.state.index,
     }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 

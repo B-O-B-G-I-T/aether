@@ -62,7 +62,7 @@ class NotificationPreview extends StatelessWidget {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text('De: ${message.senderId}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                                      Text('De: ${message.conversationId}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                                       Text(message.content, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14)),
                                       Text(
                                         '${message.timestamp.hour}:${message.timestamp.minute}',
