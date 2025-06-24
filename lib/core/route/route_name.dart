@@ -7,3 +7,5 @@ const peerRoute = '/peer';
 const chatRoute = '/peer/chat';
 
 const connectionRoute = '/connection';
+
+const qrCodeRoute = '/qrCode';

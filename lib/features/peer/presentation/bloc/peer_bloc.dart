@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:meta/meta.dart';
+import '../../../../core/errors/app_logger.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/params/conversation_params.dart';
 import '../../../../core/params/peer_params.dart';
@@ -39,11 +40,13 @@ class PeerBloc extends Bloc<PeerEvent, PeerState> {
           }
         },
         (streamPeers) async {
+          emit(PeerLoaded(peers: [], connectedPeers: []));
           await for (var peers in streamPeers) {
             if (!emit.isDone) {
               // ici metre la logique des peers
               final connectedPeers = <PeerEntity>[];
               final peersAround = <PeerEntity>[];
+
               if (peers.isNotEmpty) {
                 for (var peer in peers) {
                   // if (peer.device.state == SessionState.connecting) {
@@ -57,7 +60,7 @@ class PeerBloc extends Bloc<PeerEvent, PeerState> {
                   //         return d;
                   //       }).toList();
                   // }
-                  
+
                   if (peer.device.state == SessionState.connected) {
                     connectedPeers.add(peer);
 
@@ -72,9 +75,9 @@ class PeerBloc extends Bloc<PeerEvent, PeerState> {
                   }
 
                   peersAround.add(peer);
+                  emit(PeerLoaded(peers: peersAround, connectedPeers: connectedPeers));
                 }
               }
-              emit(PeerLoaded(peers: peersAround, connectedPeers: connectedPeers));
             }
           }
         },
