@@ -54,6 +54,9 @@ class MyApp extends StatelessWidget {
           } else if (state is PeerConfigError) {
             AppLogger.e('Main: Erreur - ${state.failure.errorMessage}');
             return MaterialApp(debugShowCheckedModeBanner: false, home: Scaffold(body: Center(child: Text('Erreur: ${state.failure.errorMessage}'))));
+          } else if (state is PeerConfigInitial) {
+            AppLogger.i('Main: État initial');
+            return MaterialApp(debugShowCheckedModeBanner: false, home: const Scaffold(body: Center(child: CircularProgressIndicator())));
           } else {
             AppLogger.e('Main: État inconnu - ${state.runtimeType}');
             return MaterialApp(debugShowCheckedModeBanner: false, home: const Scaffold(body: Center(child: Text('État inconnu'))));

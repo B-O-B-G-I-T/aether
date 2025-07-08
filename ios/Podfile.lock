@@ -48,7 +48,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
-  camera_avfoundation: 04b44aeb14070126c6529e5ab82cc7c9fca107cf
+  camera_avfoundation: be3be85408cd4126f250386828e9b1dfa40ab436
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_nearby_connections: 1c977358b344997fe3b52f97be62f7a238e1dbf0
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564

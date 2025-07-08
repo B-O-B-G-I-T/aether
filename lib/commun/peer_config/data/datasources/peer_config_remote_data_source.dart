@@ -22,19 +22,19 @@ class PeerConfigRemoteDataSourceImpl implements PeerConfigRemoteDataSource {
     NearbyService nearbyService = NearbyService();
     await nearbyService.init(
       serviceType: 'mp-connection',
-
+      imageProfile: null,
       deviceName: peerParams.peer.device.deviceName,
       description: peerParams.peer.device.deviceDescription,
       strategy: Strategy.P2P_CLUSTER,
       callback: (isRunning) async {
         if (isRunning) {
-          await startAdvertising(nearbyService);
           await startBrowsing(nearbyService);
+          await startAdvertising(nearbyService);
         }
       },
     );
-    await startAdvertising(nearbyService);
-    await startBrowsing(nearbyService);
+    // await startAdvertising(nearbyService);
+    // await startBrowsing(nearbyService);
 
     return nearbyService;
   }

@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:meta/meta.dart';
-import '../../../../core/errors/app_logger.dart';
+import '../../../../commun/peer_config/presentation/bloc/peer_config_bloc.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/params/conversation_params.dart';
 import '../../../../core/params/peer_params.dart';
@@ -59,6 +61,13 @@ class PeerBloc extends Bloc<PeerEvent, PeerState> {
                   //         }
                   //         return d;
                   //       }).toList();
+                  // }
+                  // if (Platform.isAndroid) {
+                  //   if (peer.device.state == SessionState.connected) {
+                  //     (sl<PeerConfigBloc>() as PeerConfigInitialised).nearbyService.stopBrowsingForPeers();
+                  //   } else {
+                  //     (sl<PeerConfigBloc>() as PeerConfigInitialised).nearbyService.startBrowsingForPeers();
+                  //   }
                   // }
 
                   if (peer.device.state == SessionState.connected) {

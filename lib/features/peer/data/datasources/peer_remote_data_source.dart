@@ -63,7 +63,7 @@ class PeerRemoteDataSourceImpl implements PeerRemoteDataSource {
 
     switch (device.state) {
       case SessionState.notConnected:
-        await nearbyService.invitePeer(deviceID: device.deviceId, deviceName: device.deviceName, force: 'qr-force');
+        await nearbyService.invitePeer(deviceID: device.deviceId, deviceName: device.deviceName, /*force: 'qr-force'*/);
 
         device.state = SessionState.connecting;
         break;
