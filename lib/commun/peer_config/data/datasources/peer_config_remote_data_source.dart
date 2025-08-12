@@ -28,13 +28,13 @@ class PeerConfigRemoteDataSourceImpl implements PeerConfigRemoteDataSource {
       strategy: Strategy.P2P_CLUSTER,
       callback: (isRunning) async {
         if (isRunning) {
-          await startBrowsing(nearbyService);
-          await startAdvertising(nearbyService);
+          // await startBrowsing(nearbyService);
+          // await startAdvertising(nearbyService);
         }
       },
     );
-    // await startAdvertising(nearbyService);
-    // await startBrowsing(nearbyService);
+    await startAdvertising(nearbyService);
+    await startBrowsing(nearbyService);
 
     return nearbyService;
   }

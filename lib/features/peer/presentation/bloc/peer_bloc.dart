@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:bloc/bloc.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:meta/meta.dart';
-import '../../../../commun/peer_config/presentation/bloc/peer_config_bloc.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/params/conversation_params.dart';
 import '../../../../core/params/peer_params.dart';

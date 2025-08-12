@@ -33,6 +33,7 @@ class PeerConfigBloc extends Bloc<PeerConfigEvent, PeerConfigState> {
       userBloc.add(GetUserEvent());
       await _waitForUserLoaded(userBloc: userBloc);
 
+
       final user = userBloc.state;
 
       if (user is UserLoaded) {
